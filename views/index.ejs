@@ -1,11 +1,334 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>untitled</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<style>
+		body {
+			margin:0px;
+			padding:0px;
+		}
+
+
+		#header {
+			height:60px;
+			width:100%;
+			top:0px;
+			position:fixed;
+			background-color:rgba(221,221,221,1);
+			box-shadow: 0 0 5px 1px black;
+			border-bottom-left-radius:15px;
+			border-bottom-right-radius:15px;
+		}
+		
+		@media screen and (min-width:1400px) {
+			#header,#footer {
+				width:1100px;
+			}
+			#content {
+				position:fixed;
+				width:1200px;
+			}
+		}
+		@media screen and (max-width:1400px) {
+			#header, #footer {
+				width:900px;
+			}
+			#content {
+				position:fixed;
+				width:1000px;
+			}
+		}
+		#header, #footer{
+			z-index:5;
+		}
+		
+		#content {
+			background-color:rgba(221,221,221,0.6);
+			box-shadow: 0 0 5px 1px black;
+			bottom:0px;
+			top:0px;
+		}
+
+		.category {
+			position:relative;
+			width:160px;
+		}		
+		#footer {
+			height:50px;
+			position:fixed;
+			bottom:0px;
+			background-color:rgba(221,221,221,1);
+			box-shadow: 0 0 5px 1px black;
+			border-top-left-radius:15px;
+			border-top-right-radius:15px;
+		}
+		#edit_tab {
+			position:fixed;
+			top:400px;
+			right: 0px;
+			height:200px;
+			width:21px;
+			background-color:rgba(221,221,221,1);
+			box-shadow: 0 0 5px 1px black;
+			border-bottom-left-radius:15px;
+			border-top-left-radius:15px;
+		}
+		#edit_tab.open {
+			position:fixed;
+			top:200px;
+			right: 0px;
+			height:200px;
+			width:601px;
+			background-color:rgba(221,221,221,1);
+			box-shadow: 0 0 5px 1px black;
+			border-bottom-left-radius:15px;
+			border-top-left-radius:15px;
+		}
+		#switch {
+			position:absolute;
+			width:20px;
+			height:200px;
+			background-color:rgba(200,200,200,1);
+			left:0px;
+			border-bottom-left-radius:15px;
+			border-top-left-radius:15px;
+			padding-left:5px;
+		}
+		#login_area {
+			position:relative;
+			left:20px;
+			top:5px;
+		}
+		#search_area {
+			position:absolute;
+			left:300px;
+			top:15px;
+		}
+		input[type=text] {
+			border-style:ridge;
+			margin-top:0px; 
+			margin-bottom:0px;
+		}
+		#button {
+			margin-left:2px;
+		}
+		#preview_frame {
+			position:absolute;
+			left:25px;
+			top:0px;
+			height:200px; 
+			width:200px;
+		}
+		#preview {
+			position:relative;
+			border-radius:10px;
+			border:2px dashed gray;
+			top:19px;
+			left:19px;
+		}
+		#product_info {
+			position:absolute;
+			top:9px;
+			left:229px;
+			width:370px;
+		}
+		td {
+			border:1px solid gray;
+		}
+	</style>
+</head>
+
+<body>
+	
+	<div id="header">
+		<div id="login_area" style="border:1px solid pink;width:900px;">
+			<input type="text" id="email" style="margin-top:0px; margin-bottom:0px;"><br>
+			<input type="text" id="passwd">
+			<button id="login" style="position:absolute; top:0px; left:175px; height:45px; border-radius:5px; background-color:silver;">Log In</button>
+		</div>
+		<div id="search_area" style="border:1px solid pink;width:900px;">
+			<select id="category1" class="category"></select>
+			<input type="text" style="width:200px;" id="keywd">
+			<button id="search">Search Item</button>
+		</div>
+	</div>
+	
+	<div id="content">
+<!--
+		here is the most important area.
+-->
+		
+		
+	</div>
+	
+	<div id="footer">	
+	</div>
+	
+	<div id="edit_tab">
+		<div id="switch"><br><br><br><br>◄</div>
+		<div id="preview_frame">
+			<input type="file" id="img_file" style="display:none;" />
+			<canvas id="preview" width="160" height="160"></canvas>
+		</div>
+		<div id="product_info">
+			<table>
+				<tr>
+					<td>name</td><td><input type="text" maxlength="50"></td>
+				</tr>
+				<tr>
+					<td>category</td><td><select id="category2" class="category"></select></td>
+				</tr>
+				<tr>
+					<td>price</td><td><input type="text" maxlength="8"></td>
+				</tr>
+				<tr>
+					<td>amount</td><td><input type="text" maxlength="6"></td>
+				</tr>
+				<tr>
+					<td>description</td><td><textarea rows=3 maxlength="200" style="border:1px solid gray;"></textarea></td>
+				</tr>
+			</table>
+		</div>
+		<button id="add_new" style="position: absolute; width:50px; height:60px; left:500px; top:130px;">Add Item</button>
+	</div>
+	
+	
+	
+	
+	<script>
+		jQuery(function($){
+			
+			// this is for storing uploading image data string
+			var img_data='';
+			var current_product_info=undefined;
+			var current_product_list=undefined;
+			var current_category_info=undefined;
+			var current_category_list=undefined;
+			var current_user_id=undefined;
+			
+			
+			
+			function init_load(){
+				
+				
+			// this part is for adjust the layout
+				var ww = $(window).width();
+				var hw = $("#header").width();
+				if((ww-hw)/2 > 0){
+					$("#header,#footer").css("left",(ww-hw)/2);
+				}
+				else {
+					$("#header,#footer").css("left",0);
+				}
+				var ww = $(window).width();
+				var hw = $("#content").width();
+				if((ww-hw)/2 > 0){
+					$("#content").css("left",(ww-hw)/2);
+				}
+				else {
+					$("#content").css("left",0);
+				}
+				
+				
+			// this part is for query initial data to fill out category and 
+			// according product list within that category
+				$.ajax({
+					
+					});
+				
+				
+			};
+
+			init_load();
+
+			$(window).resize(function(){
+				var ww = $(window).width();
+				var hw = $("#header").width();
+				if((ww-hw)/2 > 0){
+					$("#header,#footer").css("left",(ww-hw)/2);
+				}
+				else {
+					$("#header,#footer").css("left",0);
+				}
+				
+				var ww = $(window).width();
+				var hw = $("#content").width();
+				if((ww-hw)/2 > 0){
+					$("#content").css("left",(ww-hw)/2);
+				}
+				else {
+					$("#content").css("left",0);
+				}
+				
+				
+				});
+		
+			$("#switch").click(function(){
+				$('#edit_tab').toggleClass("open",500);
+				if($("#switch").html()=="<br><br><br><br>►") {
+					$("#switch").html("<br><br><br><br>◄");
+				}
+				else {
+					$("#switch").html("<br><br><br><br>►");
+				}
+				});			
+			
+			$("#preview").click(function(){
+				$("#img_file").click();
+				});
+			
+			$("#img_file").change(function(){
+				window.URL = window.URL || window.webkitURL;
+				
+				var f = document.getElementById('img_file').files[0];
+
+				if(f!=undefined){
+
+	// Give image data to an image object
+					var img = new Image();
+					img.src = window.URL.createObjectURL(f);
+	// Get the canvas drawing handler
+					var preview = document.getElementById('preview');
+					var ctx = preview.getContext('2d');
+
+					img.onload = function(){
+						var MAX_LEN=150;
+						
+						var w = this.width;
+						var h = this.height;
+					
+						if(w>h){
+							w = MAX_LEN;
+							h = w*this.height/this.width;
+						}
+						else
+						{
+							h = MAX_LEN;
+							w = h*this.width/this.height;
+						}
+						console.log(w+":"+h);
+						ctx.clearRect(0,0,60,60);
+						ctx.drawImage(img, 5,5,w,h);
+						img_data = preview.toDataURL();
+						console.log(img_data);
+					};
+				}
+			//this is the end of img_file change.	
+			});	
+			
+			
+			
+			
+			
+			// this is the end of jQuery(function($))
+			});
+	</script>
+	
+</body>
+
 </html>
