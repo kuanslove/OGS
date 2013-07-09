@@ -34,3 +34,30 @@ user_id integer not null,
 category_id integer not null,
 product_id integer not null,
 n_a boolean not null default false);
+
+
+INSERT INTO users (name,email,pswd) VALUES ('kxing','kxing@mtu.edu','123');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

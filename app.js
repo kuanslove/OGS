@@ -1,13 +1,12 @@
 
-/**
- * Module dependencies.
- */
-
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path');
+
+var pg = require('pg');
+var constring = "posgres://kuan:24093072@localhost:5432/kuan";
 
 var app = express();
 
@@ -28,7 +27,27 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/init', function(req,res){
+	pg.connect(constring, function(err, client, done){
+		if(err){
+			done();
+			return console.error('Error to connect. ', err);
+		}
+		else {
+			var qstring="select * from users";
+			client.query(qstring, function(err, result){
+				done();
+				if(err){
+					return console.error('Error to fetch data. ', err);
+				}
+				else {
+					res.json(result.rows);
+				}
+			});
+		}
+		
+	});
+})
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

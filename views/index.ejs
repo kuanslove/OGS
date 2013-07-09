@@ -100,6 +100,8 @@
 			padding-left:5px;
 		}
 		#login_area {
+			border:1px solid pink;
+			width:900px;
 			position:relative;
 			left:20px;
 			top:5px;
@@ -113,9 +115,10 @@
 			border-style:ridge;
 			margin-top:0px; 
 			margin-bottom:0px;
+			width:160px;
 		}
 		#button {
-			margin-left:2px;
+			margin-left:10px;
 		}
 		#preview_frame {
 			position:absolute;
@@ -146,10 +149,11 @@
 <body>
 	
 	<div id="header">
-		<div id="login_area" style="border:1px solid pink;width:900px;">
+		<div id="login_area">
 			<input type="text" id="email" style="margin-top:0px; margin-bottom:0px;"><br>
 			<input type="text" id="passwd">
-			<button id="login" style="position:absolute; top:0px; left:175px; height:45px; border-radius:5px; background-color:silver;">Log In</button>
+			<button id="login" style="position:absolute; top:0px; left:175px; 
+			height:45px; border-radius:5px; background-color:silver;">Log In</button>
 		</div>
 		<div id="search_area" style="border:1px solid pink;width:900px;">
 			<select id="category1" class="category"></select>
@@ -159,11 +163,7 @@
 	</div>
 	
 	<div id="content">
-<!--
-		here is the most important area.
--->
-		
-		
+
 	</div>
 	
 	<div id="footer">	
@@ -194,7 +194,7 @@
 				</tr>
 			</table>
 		</div>
-		<button id="add_new" style="position: absolute; width:50px; height:60px; left:500px; top:130px;">Add Item</button>
+		<button id="add_new" style="position: absolute; width:50px; height:65px; left:510px; top:120px;">Add Item</button>
 	</div>
 	
 	
