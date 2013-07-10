@@ -1,4 +1,4 @@
-OGS
+OGS --Online Grocery Store
 ===
 
 This is my summer intern project in SRS Pharmacy:
