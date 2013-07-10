@@ -100,13 +100,15 @@
 			padding-left:5px;
 		}
 		#login_area {
-			border:1px solid pink;
+			//border:1px solid pink;
 			width:900px;
 			position:relative;
 			left:20px;
 			top:5px;
 		}
 		#search_area {
+			//border:1px solid pink;
+			width:900px;
 			position:absolute;
 			left:300px;
 			top:15px;
@@ -122,17 +124,18 @@
 		}
 		#preview_frame {
 			position:absolute;
-			left:25px;
-			top:0px;
-			height:200px; 
-			width:200px;
+			left:45px;
+			top:20px;
+			height:160px; 
+			width:160px;
+			border-radius:10px;
+			border:2px dashed gray;
 		}
 		#preview {
 			position:relative;
-			border-radius:10px;
-			border:2px dashed gray;
-			top:19px;
-			left:19px;
+			left:5px;
+			top:5px;
+			border-radius:5px;
 		}
 		#product_info {
 			position:absolute;
@@ -141,7 +144,7 @@
 			width:370px;
 		}
 		td {
-			border:1px solid gray;
+			border:0px solid gray;
 		}
 	</style>
 </head>
@@ -155,7 +158,7 @@
 			<button id="login" style="position:absolute; top:0px; left:175px; 
 			height:45px; border-radius:5px; background-color:silver;">Log In</button>
 		</div>
-		<div id="search_area" style="border:1px solid pink;width:900px;">
+		<div id="search_area">
 			<select id="category1" class="category"></select>
 			<input type="text" style="width:200px;" id="keywd">
 			<button id="search">Search Item</button>
@@ -173,7 +176,7 @@
 		<div id="switch"><br><br><br><br>◄</div>
 		<div id="preview_frame">
 			<input type="file" id="img_file" style="display:none;" />
-			<canvas id="preview" width="160" height="160"></canvas>
+			<canvas id="preview" width=150 height=150></canvas>
 		</div>
 		<div id="product_info">
 			<table>
@@ -190,7 +193,7 @@
 					<td>amount</td><td><input type="text" maxlength="6"></td>
 				</tr>
 				<tr>
-					<td>description</td><td><textarea rows=3 maxlength="200" style="border:1px solid gray;"></textarea></td>
+					<td>description</td><td><textarea rows=3 maxlength="200" style="width:160px; height:60px; resize:none; border:1px solid gray;"></textarea></td>
 				</tr>
 			</table>
 		</div>
@@ -237,14 +240,35 @@
 				
 			// this part is for query initial data to fill out category and 
 			// according product list within that category
-				$.ajax({
-					
+			
+				function fill_category(data){
+					// here, the data is an array
+					var category_list='';
+					$.each(data, function(index, val){
+						category_list+='<option class="category_item" category_id='+val.id+'>'+val.name+'</option>';
 					});
+					$('.category').html(category_list);
+					$('.category').attr('selected_id',data[0].id);
+				}
+				
+				$.ajax({
+					url:"/s_category/",
+					type:"POST",
+					datatype:'JSON',
+					success: fill_category
+				});
 				
 				
 			};
 
 			init_load();
+
+
+			$('.category').change(function(){
+				$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
+				alert($(this).find("option:selected").attr("category_id"));
+				})
+
 
 			$(window).resize(function(){
 				var ww = $(window).width();
@@ -312,8 +336,10 @@
 							w = h*this.width/this.height;
 						}
 						console.log(w+":"+h);
-						ctx.clearRect(0,0,60,60);
-						ctx.drawImage(img, 5,5,w,h);
+						//~ preview.width=w;
+						//~ preview.height=h;
+						ctx.clearRect(0,0,MAX_LEN,MAX_LEN);
+						ctx.drawImage(img, 0,0,w,h);
 						img_data = preview.toDataURL();
 						console.log(img_data);
 					};

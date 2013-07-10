@@ -49,6 +49,27 @@ app.get('/init', function(req,res){
 	});
 })
 
+app.post('/s_category/',function(req,res){
+	pg.connect(constring, function(err, client, done){
+		if(err){
+			done();
+			return console.error('Error to connect. ', err);
+		}
+		else {
+			var qstring="select * from category where n_a=false";
+			client.query(qstring, function(err, result){
+				done();
+				if(err){
+					return console.error('Error to fetch data. ', err);
+				}
+				else {
+					res.json(result.rows);
+				}
+			});
+		}
+	});
+});
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
