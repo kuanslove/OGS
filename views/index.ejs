@@ -266,9 +266,10 @@
 
 			$('.category').change(function(){
 				$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
-				alert($(this).find("option:selected").attr("category_id"));
 				})
-
+			$("#search").click(function(){
+				alert($("#category1").attr("selected_id"));
+				});
 
 			$(window).resize(function(){
 				var ww = $(window).width();

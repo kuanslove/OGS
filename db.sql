@@ -37,11 +37,11 @@ n_a boolean not null default false);
 
 
 INSERT INTO users (name,email,pswd) VALUES ('kxing','kxing@mtu.edu','123');
-
-
-
-
-
+INSERT INTO category (name) VALUES ('drinks');
+INSERT INTO category (name) VALUES ('food');
+INSERT INTO category (name) VALUES ('clothing');
+INSERT INTO category (name) VALUES ('electronics');
+INSERT INTO category (name) VALUES ('mechanic');
 
 
 
