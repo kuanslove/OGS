@@ -6,7 +6,7 @@
 	<title>untitled</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 	<style>
 		body {
 			margin:0px;
@@ -119,6 +119,10 @@
 			margin-bottom:0px;
 			width:160px;
 		}
+		#email.textlabel {
+			border:none;
+			background-color:rgba(0,0,0,0);
+		}
 		#button {
 			margin-left:10px;
 		}
@@ -200,20 +204,20 @@
 		<button id="add_new" style="position: absolute; width:50px; height:65px; left:510px; top:120px;">Add Item</button>
 	</div>
 	
-	
-	
-	
 	<script>
+		
+		var img_data='';
+		var current_product_info=undefined;
+		var current_product_list=undefined;
+		var current_category_info=undefined;
+		var current_category_list=undefined;
+		var current_user_id=undefined;
+		var authenticated=false;
+			
 		jQuery(function($){
 			
 			// this is for storing uploading image data string
-			var img_data='';
-			var current_product_info=undefined;
-			var current_product_list=undefined;
-			var current_category_info=undefined;
-			var current_category_list=undefined;
-			var current_user_id=undefined;
-			
+
 			
 			
 			function init_load(){
@@ -267,6 +271,7 @@
 			$('.category').change(function(){
 				$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
 				})
+				
 			$("#search").click(function(){
 				alert($("#category1").attr("selected_id"));
 				});
@@ -348,8 +353,59 @@
 			//this is the end of img_file change.	
 			});	
 			
+			function user_login(email, passwd, success_cb, error_cb){
+				$.ajax({
+					url:"/login/",
+					type:"POST",
+					datatype:'JSON',
+					data:{
+						'email':email,
+						'passwd':passwd
+					},
+					success: success_cb,
+					error: error_cb
+				});
+			};
 			
+			function auth_user(user_id,callback){
+				$.ajax({
+					url:"/auth/",
+					type:"POST",
+					datatype:'JSON',
+					data:{
+						'user_id':user_id
+					},
+					success: callback,
+					error: function(err){ alert('Login Failed'); }
+				});
+			};
 			
+			$('#login').click(function(){
+
+				function suc_cb(data){
+					if(data.authed){
+						alert('hoho');
+						current_user_id=data.user_id;
+						$('#login').text('Log out');
+						$('#email').attr('readonly', 'readonly');
+						$('#email').addClass('textlabel');
+						$('#passwd').hide();
+					}
+					else {
+						$('#login').text('Log In');
+						$('#email').removeAttr('readonly');
+						$('#email').removeClass('textlabel');
+						$('#passwd').show();
+						alert("Please check user email and password!");
+					}
+				};
+				function err_cb(err){
+					alert('Login Error!');
+				};
+				
+				user_login( $('#email').val().trim(), $('#passwd').val().trim(), suc_cb, err_cb );
+				
+			});	
 			
 			
 			// this is the end of jQuery(function($))
