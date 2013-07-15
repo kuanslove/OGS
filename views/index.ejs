@@ -197,19 +197,19 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		<div id="product_info">
 			<table>
 				<tr>
-					<td>name</td><td><input type="text" maxlength="50"></td>
+					<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
 				</tr>
 				<tr>
-					<td>category</td><td><select id="category2" class="category"></select></td>
+					<td>category</td><td><select id="product_category" class="category"></select></td>
 				</tr>
 				<tr>
-					<td>price</td><td><input type="text" maxlength="8"></td>
+					<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
 				</tr>
 				<tr>
-					<td>amount</td><td><input type="text" maxlength="6"></td>
+					<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
 				</tr>
 				<tr>
-					<td>description</td><td><textarea rows=3 maxlength="200" style="width:160px; height:60px; resize:none; border:1px solid gray;"></textarea></td>
+					<td>description</td><td><textarea id="product_desc" rows=3 maxlength="200" style="width:160px; height:60px; resize:none; border:1px solid gray;"></textarea></td>
 				</tr>
 			</table>
 		</div>
@@ -229,8 +229,10 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		jQuery(function($){
 			
 			
-			// This is a very important function, almost every client side 
-			// operation should go through this first. 
+			
+			
+////////////////////// This part includes important global functions /////////////////////////////////
+			// most client sideoperation should involve this first. 
 			function auth_user(suc_cb, err_cb){
 			// originally I plan to send out a user_id to server to auth
 			// later I found the cookie can store that info and auto sent with request.
@@ -245,6 +247,94 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					error: err_cb
 				});
 			};
+			
+			// this function is for getting all category info from server
+			// data return from server is all category id and name
+			function get_category_info(suc_cb, err_cb){
+				$.ajax({
+					url:"/s_category/",
+					type:"POST",
+					datatype:'JSON',
+					success: suc_cb,
+					error:err_cb
+				});
+			};
+			
+			function get_product_list_info(suc_cb, err_cb, category_id, disp_num){
+				// return data contains total number of products, first page list
+				// 
+				$.ajax({
+					url:"/s_category/"+category_id+"/product/",
+					type:"POST",
+					datatype:"JSON",
+					data:{offset:offset},
+					success:suc_cb,
+					error:err_cb
+				});
+			};
+			
+			// fill a DOM element with a page num link, each link init one request
+			function generate_page_number(tag, n_perpage, req_fun){
+				
+			};
+/////////////////////////////////////////////////////////////////////////////////////////////////////////			
+				
+				
+				
+				
+
+
+			// this part is for query initial data to fill out category and 
+			// according product list within that category
+			function fill_category(){	
+				function suc_cb(data){
+					// here, the data is an array
+					var category_list='';
+					$.each(data, function(index, val){
+						category_list+='<option class="category_item" category_id='+val.id+'>'+val.name+'</option>';
+					});
+					$('.category').html(category_list);
+					$('.category').attr('selected_id',data[0].id);
+				};
+				function err_cb(){
+					alert("Fail to get category info.")
+				};
+				get_category_info(suc_cb, err_cb);
+			};
+
+			// this part is for checking if a user logged in, and send back to client side
+			// to change client login area style(such as lock the login textbox and set logout button)
+			function set_user_login_info(){
+				// when the page first loaded, we need to check if there has been already
+				// user logged-in info, if so, we need lock user login text box and show 
+				// logout button. 
+				function suc_cb(data){
+					if(data.authed){
+						alert(data.message);
+						$('#login').text('Log out');
+						$('#email').attr('readonly', 'readonly');
+						$('#email').addClass('textlabel');
+						$('#email').val(data.user_email);
+						$('#passwd').hide();
+					}
+					else {
+						alert(data.message);
+						$('#login').text('Log In');
+						$('#email').removeAttr('readonly');
+						$('#email').removeClass('textlabel');
+						$('#email').val("");
+						$('#passwd').show();
+					}
+				};
+				function err_cb(err){
+					alert('Login Error!');
+				};
+				auth_user(suc_cb, err_cb);
+			};
+
+
+
+
 
 			function init_load(){
 			// this part is for adjusting the layout
@@ -264,60 +354,11 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				else {
 					$("#content").css("left",0);
 				}
-				
-				
-			// this part is for query initial data to fill out category and 
-			// according product list within that category
-				function fill_category(data){
-					// here, the data is an array
-					var category_list='';
-					$.each(data, function(index, val){
-						category_list+='<option class="category_item" category_id='+val.id+'>'+val.name+'</option>';
-					});
-					$('.category').html(category_list);
-					$('.category').attr('selected_id',data[0].id);
-				}
-			// the ajax request using fill_category
-				$.ajax({
-					url:"/s_category/",
-					type:"POST",
-					datatype:'JSON',
-					success: fill_category
-				});
 
-			// this part is for checking if a user logged in, and send back to client side
-			// to change client login area style(such as lock the login textbox and set logout button)
-				function get_user_login_info(){
-					// when the page first loaded, we need to check if there has been already
-					// user logged-in info, if so, we need lock user login text box and show 
-					// logout button. 
-					function suc_cb(data){
-						if(data.authed){
-							alert(data.message);
-							$('#login').text('Log out');
-							$('#email').attr('readonly', 'readonly');
-							$('#email').addClass('textlabel');
-							$('#email').val(data.user_email);
-							$('#passwd').hide();
-						}
-						else {
-							alert(data.message);
-							$('#login').text('Log In');
-							$('#email').removeAttr('readonly');
-							$('#email').removeClass('textlabel');
-							$('#email').val("");
-							$('#passwd').show();
-						}
-					};
-					function err_cb(err){
-						alert('Login Error!');
-					};
-					auth_user(suc_cb, err_cb);
-				};
-				get_user_login_info();
-				
-				
-			// this is the end of init_load();	
+				fill_category();	
+				set_user_login_info();			
+
+				// this is the end of init_load();	
 			};
 			init_load();
 
@@ -433,45 +474,70 @@ If no keywrd specified, list all products in that category.">Search Item</button
 							w = h*this.width/this.height;
 						}
 						console.log(w+":"+h);
-						//~ preview.width=w;
-						//~ preview.height=h;
 						ctx.clearRect(0,0,MAX_LEN,MAX_LEN);
 						ctx.drawImage(img, 0,0,w,h);
-						img_data = preview.toDataURL();
-						console.log(img_data);
 					};
 				}
 			//this is the end of img_file change.	
 			});	
 			
 			$('#add_new').click(function(){
+				// client provides product info( self-info, category_id), server uses 
+				// session user_id, use date() as date_reg, date_rev
+				
+				
+				//get image data
+				var preview = document.getElementById('preview');
+				var img_data = preview.toDataURL();
+				var product_form = {
+					name:$("#product_name").val(),
+					category:$("#product_category").attr("selected_id"),
+					price:$("#product_price").val(),
+					amount:$("#product_amnt").val(),
+					description:$("#product_desc").val(),
+					img_data:img_data
+				};
+				console.log(product_form);
 				function suc_cb(data){
 					if(data.authed){
 						$.ajax({
-							url:"/add_new/",
+							url:"/a_product/",
 							type:"POST",
-							data:{},
+							data:{
+								product_info:product_form,
+							},
 							datatype:"JSON",
 							success:function(sts){
+								// if server updata this product info,
+								// it will return sts.cuc==true and allow 
+								// this page to update product list.
 								if(sts.suc){
 									alert("New product added");
+									// here should add update product list.
 								}
 								else {
 									alert("Please check login info.");
 								}
 							},
 							error:function(err){
-								
+								alert("Product info uploading failed.");
 							}
 						});
-					};
-					
+					}
+					else {
+						alert("User not authenticated.");
+					}
 				};
 				function err_cb(err){
-					alert()
+					alert("Fail to talk to auth server.");
 				};
 				auth_user(suc_cb, err_cb);				
 			});
+
+
+
+
+
 
 
 

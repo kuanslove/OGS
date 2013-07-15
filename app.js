@@ -27,7 +27,7 @@ function set_env(){
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.cookieParser('you can never crack this secret key, can you?'));
-	app.use(express.session({ cookie:{ maxAge:600000} }));
+	app.use(express.session({ cookie:{ maxAge:6000000} }));
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 
@@ -37,8 +37,6 @@ function set_env(){
 	}
 };
 set_env();
-
-
 
 function check_https(req, res){
 	if(req.protocol=='https') {
@@ -54,29 +52,6 @@ app.get('/', function(req, res){
 	if(check_https(req,res)){
 		console.log(req.protocol);
 		res.render('index', { title: 'Express' });
-	}
-});
-app.get('/init', function(req,res){
-	if(check_https(req,res)){
-		pg.connect(constring, function(err, client, done){
-			if(err){
-				done();
-				return console.error('Error to connect. ', err);
-			}
-			else {
-				var qstring="select * from users";
-				client.query(qstring, function(err, result){
-					done();
-					if(err){
-						return console.error('Error to fetch data. ', err);
-					}
-					else {
-						res.json(result.rows);
-					}
-				});
-			}
-			
-		});
 	}
 });
 app.post('/s_category/',function(req,res){
@@ -99,7 +74,27 @@ app.post('/s_category/',function(req,res){
 		}
 	});
 });
+app.post('/a_product/', function(req, res){
+	if(check_https(req,res)) {
+		pg.connect(constring, function(err, client, done){
+			if(err){
+				done();
+				return console.error('Error to connect. ', err);
+			}
+			else {			
+				var qstring="INSERT INTO products (name, description, price, user_id, category_id, amnt, img) VALUES ($1,$2,$3,$4,$5,$6,$7)";
+				var fm = req.body.product_info;
+				var placeholder=[fm.name,fm.description,fm.price, req.session.user_id,fm.category,fm.amount,fm.img_data];
+				client.query(qstring, placeholder,function(err, result){
+					done();
+				});	
+			}
 
+
+
+		});
+	}
+});
 app.post('/auth/', function(req, res){
 	console.log("this is server session:"+req.session.user_id);
 	console.log("this is cookie user_id:"+req.cookies.user_id);
@@ -126,7 +121,6 @@ app.post('/auth/', function(req, res){
 			});
 	}
 });
-
 app.post('/login/', function(req, res){
 	
 	if(req.session.user_id){
@@ -151,7 +145,7 @@ app.post('/login/', function(req, res){
 						else {
 							console.log(result.rows);
 							if(result.rows.length!=0){
-								res.cookie('user_id',result.rows[0].id, {maxAge:10000});
+								res.cookie('user_id',result.rows[0].id, {maxAge:100000});
 								req.session.user_id=result.rows[0].id;
 								req.session.user_email=result.rows[0].email;
 								res.json({'authed':true, 'user_name':result.rows[0].name});
