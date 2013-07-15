@@ -1,7 +1,6 @@
 
 var express = require('express')
   , fs = require('fs')
-  , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path');
@@ -39,16 +38,47 @@ function set_env(){
 };
 set_env();
 
-//some utility functions below
 
-//[1]. qt is used for adding single quote to a string for SQL query string building
-function qt(keyword){
-	return "'"+keyword.trim()+"'";
+
+function check_https(req, res){
+	if(req.protocol=='https') {
+		return true;
+	}
+	else {
+		res.redirect("https://localhost"+req.url);
+		return false;
+	}
 };
 
-
-app.get('/', routes.index);
-app.get('/init', routes.find_admin);
+app.get('/', function(req, res){
+	if(check_https(req,res)){
+		console.log(req.protocol);
+		res.render('index', { title: 'Express' });
+	}
+});
+app.get('/init', function(req,res){
+	if(check_https(req,res)){
+		pg.connect(constring, function(err, client, done){
+			if(err){
+				done();
+				return console.error('Error to connect. ', err);
+			}
+			else {
+				var qstring="select * from users";
+				client.query(qstring, function(err, result){
+					done();
+					if(err){
+						return console.error('Error to fetch data. ', err);
+					}
+					else {
+						res.json(result.rows);
+					}
+				});
+			}
+			
+		});
+	}
+});
 app.post('/s_category/',function(req,res){
 	pg.connect(constring, function(err, client, done){
 		if(err){
@@ -69,61 +99,77 @@ app.post('/s_category/',function(req,res){
 		}
 	});
 });
+
 app.post('/auth/', function(req, res){
-	pg.connect(constring, function(err, client, done){
-		if(err){
-			done();
-			return console.error('Error to connect. ', err);
-		}
-		else {
-				var qstring="select * from users where n_a=false and admn=true and email=$1 and pswd=$2";
-				client.query(qstring, ["'"+req.body['email']+"'", "'"+req.body['passwd']+"'"], function(err, result){
-					done();
-					if(err){
-						return console.error('Error to fetch data. ', err);
-					}
-					else {
-						if(result==[]){
-							res.json({'authed':false, 'user_id':0});
-						}
-						else {
-							res.json({'authed':true, 'user_id':result.rows[0].id});
-						}
-					}
+	console.log("this is server session:"+req.session.user_id);
+	console.log("this is cookie user_id:"+req.cookies.user_id);
+	if(req.cookies.user_id && req.session.user_id){
+		if(req.cookies.user_id==req.session.user_id){
+			res.json( {
+				authed:true,
+				user_id:req.session.user_id,
+				user_email:req.session.user_email,
+				message:"Authed!"
 				});
 		}
-	});
-})
-
-app.post('/login/', function(req, res){
-	pg.connect(constring, function(err, client, done){
-		if(err){
-			done();
-			return console.error('Error to connect. ', err);
-		}
 		else {
-			var qstring="select * from users where n_a=false and email=$1 and pswd=md5($2)";
-			console.log(req.body.email,req.body.passwd);
-			client.query(qstring, [req.body.email,req.body.passwd],function(err, result){
-				done();
-				if(err){
-					return console.error('Error to fetch data. ', err);
-				}
-				else {
-					console.log(result.rows);
-					if(result.rows.length!=0){
-						res.json({'authed':true, 'user_id':result.rows[0].id});
-					}
-					else {
-						res.json({'authed':false, 'user_id':0});
-					}
-					
-				}
-			});
+			res.json( {
+				authed:false,
+				message:"Please login again."
+				});
 		}
-	});
+	}
+	else {
+		res.json( {
+			authed:false,
+			message:"Please login again."
+			});
+	}
 });
 
+app.post('/login/', function(req, res){
+	
+	if(req.session.user_id){
+		console.log("the user_id is in session.")
+		req.session.user_id=undefined;
+		res.clearCookie('user_id');
+		res.json({'authed':false, 'user_id':undefined});
+	}
+	else {
+			pg.connect(constring, function(err, client, done){
+				if(err){
+					done();
+					return console.error('Error to connect. ', err);
+				}
+				else {
+					var qstring="select * from users where n_a=false and email=$1 and pswd=md5($2)";
+					client.query(qstring, [req.body.email,req.body.passwd],function(err, result){
+						done();
+						if(err){
+							return console.error('Error to fetch data. ', err);
+						}
+						else {
+							console.log(result.rows);
+							if(result.rows.length!=0){
+								res.cookie('user_id',result.rows[0].id, {maxAge:10000});
+								req.session.user_id=result.rows[0].id;
+								req.session.user_email=result.rows[0].email;
+								res.json({'authed':true, 'user_name':result.rows[0].name});
+							}
+							else {
+								req.session.user_id=undefined;
+								req.session.user_email=undefined;
+								res.clearCookie('user_id');
+								res.json({'authed':false, 'user_id':undefined});
+							}
+							
+						}
+					});
+				}
+			});
+	}
+
+});
 
 
 

@@ -110,10 +110,10 @@
 			//border:1px solid pink;
 			width:900px;
 			position:absolute;
-			left:300px;
+			left:400px;
 			top:15px;
 		}
-		input[type=text] {
+		input[type=text],input[type=password] {
 			border-style:ridge;
 			margin-top:0px; 
 			margin-bottom:0px;
@@ -157,15 +157,27 @@
 	
 	<div id="header">
 		<div id="login_area">
-			<input type="text" id="email" style="margin-top:0px; margin-bottom:0px;"><br>
-			<input type="text" id="passwd">
-			<button id="login" style="position:absolute; top:0px; left:175px; 
+			<table>
+				<tr>
+					<td style="width:65px;font-size:10px;">USEREMAIL</td>
+					<td ><input type="text" value="" title="USER EMAIL" id="email" 
+					style="margin-top:0px; margin-bottom:0px;"></td>
+				</tr>
+				<tr>
+					<td style="width:65px;font-size:10px;">PASSWORD</td>
+					<td><input type="password" id="passwd"></td>
+				</tr>
+			</table>
+			
+			
+			<button id="login" style="position:absolute; top:3px; left:245px; 
 			height:45px; border-radius:5px; background-color:silver;">Log In</button>
 		</div>
 		<div id="search_area">
-			<select id="category1" class="category"></select>
-			<input type="text" style="width:200px;" id="keywd">
-			<button id="search">Search Item</button>
+			<select id="category1" class="category" title="Search in"></select>
+			<input type="text" style="width:200px;" id="keywd" title="Search for">
+			<button id="search" title="Search product in that category.
+If no keywrd specified, list all products in that category.">Search Item</button>
 		</div>
 	</div>
 	
@@ -213,17 +225,29 @@
 		var current_category_list=undefined;
 		var current_user_id=undefined;
 		var authenticated=false;
-			
+		
 		jQuery(function($){
 			
-			// this is for storing uploading image data string
+			
+			// This is a very important function, almost every client side 
+			// operation should go through this first. 
+			function auth_user(suc_cb, err_cb){
+			// originally I plan to send out a user_id to server to auth
+			// later I found the cookie can store that info and auto sent with request.
+			// the returned data will be in JSON format and there is a "authed" var can show if
+			// this user has been authened. The return data will be automatically binded to first 
+			// param of callback function.
+				$.ajax({
+					url:"/auth/",
+					type:"POST",
+					datatype:'JSON',
+					success: suc_cb,
+					error: err_cb
+				});
+			};
 
-			
-			
 			function init_load(){
-				
-				
-			// this part is for adjust the layout
+			// this part is for adjusting the layout
 				var ww = $(window).width();
 				var hw = $("#header").width();
 				if((ww-hw)/2 > 0){
@@ -244,7 +268,6 @@
 				
 			// this part is for query initial data to fill out category and 
 			// according product list within that category
-			
 				function fill_category(data){
 					// here, the data is an array
 					var category_list='';
@@ -254,19 +277,87 @@
 					$('.category').html(category_list);
 					$('.category').attr('selected_id',data[0].id);
 				}
-				
+			// the ajax request using fill_category
 				$.ajax({
 					url:"/s_category/",
 					type:"POST",
 					datatype:'JSON',
 					success: fill_category
 				});
-				
-				
-			};
 
+			// this part is for checking if a user logged in, and send back to client side
+			// to change client login area style(such as lock the login textbox and set logout button)
+				function get_user_login_info(){
+					// when the page first loaded, we need to check if there has been already
+					// user logged-in info, if so, we need lock user login text box and show 
+					// logout button. 
+					function suc_cb(data){
+						if(data.authed){
+							alert(data.message);
+							$('#login').text('Log out');
+							$('#email').attr('readonly', 'readonly');
+							$('#email').addClass('textlabel');
+							$('#email').val(data.user_email);
+							$('#passwd').hide();
+						}
+						else {
+							alert(data.message);
+							$('#login').text('Log In');
+							$('#email').removeAttr('readonly');
+							$('#email').removeClass('textlabel');
+							$('#email').val("");
+							$('#passwd').show();
+						}
+					};
+					function err_cb(err){
+						alert('Login Error!');
+					};
+					auth_user(suc_cb, err_cb);
+				};
+				get_user_login_info();
+				
+				
+			// this is the end of init_load();	
+			};
 			init_load();
 
+			$('#login').click(function(){
+				function suc_cb(data){
+					if(data.authed){
+						alert('hoho');
+						current_user_id=data.user_id;
+						$('#login').text('Log out');
+						$('#email').attr('readonly', 'readonly');
+						$('#email').addClass('textlabel');
+						$('#passwd').hide();
+					}
+					else {
+						$('#login').text('Log In');
+						$('#email').removeAttr('readonly');
+						$('#email').removeClass('textlabel');
+						$('#passwd').show();
+						alert("Please check user email and password!");
+					}
+				};
+				function err_cb(err){
+					alert('Login Error!');
+				};
+			// this function is for login button click
+				function user_login(email, passwd, success_cb, error_cb){
+					$.ajax({
+						url:"/login/",
+						type:"POST",
+						datatype:'JSON',
+						data:{
+							'email':email,
+							'passwd':passwd
+						},
+						success: success_cb,
+						error: error_cb
+					});
+				};
+				user_login( $('#email').val().trim(), $('#passwd').val().trim(), suc_cb, err_cb );
+			});	
 
 			$('.category').change(function(){
 				$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
@@ -311,7 +402,7 @@
 			$("#preview").click(function(){
 				$("#img_file").click();
 				});
-			
+		
 			$("#img_file").change(function(){
 				window.URL = window.URL || window.webkitURL;
 				
@@ -353,60 +444,39 @@
 			//this is the end of img_file change.	
 			});	
 			
-			function user_login(email, passwd, success_cb, error_cb){
-				$.ajax({
-					url:"/login/",
-					type:"POST",
-					datatype:'JSON',
-					data:{
-						'email':email,
-						'passwd':passwd
-					},
-					success: success_cb,
-					error: error_cb
-				});
-			};
-			
-			function auth_user(user_id,callback){
-				$.ajax({
-					url:"/auth/",
-					type:"POST",
-					datatype:'JSON',
-					data:{
-						'user_id':user_id
-					},
-					success: callback,
-					error: function(err){ alert('Login Failed'); }
-				});
-			};
-			
-			$('#login').click(function(){
-
+			$('#add_new').click(function(){
 				function suc_cb(data){
 					if(data.authed){
-						alert('hoho');
-						current_user_id=data.user_id;
-						$('#login').text('Log out');
-						$('#email').attr('readonly', 'readonly');
-						$('#email').addClass('textlabel');
-						$('#passwd').hide();
-					}
-					else {
-						$('#login').text('Log In');
-						$('#email').removeAttr('readonly');
-						$('#email').removeClass('textlabel');
-						$('#passwd').show();
-						alert("Please check user email and password!");
-					}
+						$.ajax({
+							url:"/add_new/",
+							type:"POST",
+							data:{},
+							datatype:"JSON",
+							success:function(sts){
+								if(sts.suc){
+									alert("New product added");
+								}
+								else {
+									alert("Please check login info.");
+								}
+							},
+							error:function(err){
+								
+							}
+						});
+					};
+					
 				};
 				function err_cb(err){
-					alert('Login Error!');
+					alert()
 				};
-				
-				user_login( $('#email').val().trim(), $('#passwd').val().trim(), suc_cb, err_cb );
-				
-			});	
-			
+				auth_user(suc_cb, err_cb);				
+			});
+
+
+
+
+
 			
 			// this is the end of jQuery(function($))
 			});
