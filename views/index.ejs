@@ -52,6 +52,8 @@
 			box-shadow: 0 0 5px 1px black;
 			bottom:0px;
 			top:0px;
+			padding-top:80px;
+			padding-left:30px;
 		}
 
 		.category {
@@ -182,7 +184,108 @@ If no keywrd specified, list all products in that category.">Search Item</button
 	</div>
 	
 	<div id="content">
-
+		<ul id="product_list_frame" style="position:absolute; width:950px;height:600px;top:70px; left:10px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto;">
+			<li>
+				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px; ">
+					<div id="preview" style="border:1px solid purple;width:150px; height:150px;"></div>
+					<div id="product_table" style="position:absolute; top:20px; left:200px;">
+						<table style="margin-top:20px;">
+							<tr>
+								<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4><textarea id="product_desc" rows=4  maxlength="200" style="width:160px; 
+								height:90px; resize:none; border:1px solid gray;"></textarea></td>
+							</tr>
+							<tr>
+								<td>category</td><td><select id="product_category" class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button id="edit_product" style="position: absolute; width:100px; height:100px; left:710px; top:40px;">Update Item</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px;">
+					<div id="preview" style="border:1px solid purple;width:150px; height:150px;"></div>
+					<div id="product_table" style="position:absolute; top:20px; left:200px;">
+						<table style="margin-top:20px;">
+							<tr>
+								<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4><textarea id="product_desc" rows=4  maxlength="200" style="width:160px; 
+								height:90px; resize:none; border:1px solid gray;"></textarea></td>
+							</tr>
+							<tr>
+								<td>category</td><td><select id="product_category" class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button id="edit_product" style="position: absolute; width:100px; height:100px; left:710px; top:40px;">Update Item2</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px;">
+					<div id="preview" style="border:1px solid purple;width:150px; height:150px;"></div>
+					<div id="product_table" style="position:absolute; top:20px; left:200px;">
+						<table style="margin-top:20px;">
+							<tr>
+								<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4><textarea id="product_desc" rows=4  maxlength="200" style="width:160px; 
+								height:90px; resize:none; border:1px solid gray;"></textarea></td>
+							</tr>
+							<tr>
+								<td>category</td><td><select id="product_category" class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button id="edit_product" style="position: absolute; width:100px; height:100px; left:710px; top:40px;">Update Item2</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px;">
+					<div id="preview" style="border:1px solid purple;width:150px; height:150px;"></div>
+					<div id="product_table" style="position:absolute; top:20px; left:200px;">
+						<table style="margin-top:20px;">
+							<tr>
+								<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4><textarea id="product_desc" rows=4  maxlength="200" style="width:160px; 
+								height:90px; resize:none; border:1px solid gray;"></textarea></td>
+							</tr>
+							<tr>
+								<td>category</td><td><select id="product_category" class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button id="edit_product" style="position: absolute; width:100px; height:100px; left:710px; top:40px;">Update Item2</button>
+				</div>
+			</li>
+		</ul>
 	</div>
 	
 	<div id="footer">	
@@ -354,7 +457,14 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				else {
 					$("#content").css("left",0);
 				}
-
+				
+				var wh = $(window).height();
+				var hw = $("#header").height();
+				console.log(hw);
+				var plfh = wh-2*hw;
+				$('#product_list_frame').height(plfh-10);
+				
+				
 				fill_category();	
 				set_user_login_info();			
 
@@ -428,7 +538,13 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				}
 				
 				
-				});
+				var wh = $(window).height();
+				var hw = $("#header").height();
+				console.log(hw);
+				var plfh = wh-2*hw;
+				$('#product_list_frame').height(plfh-10);
+				
+			});
 		
 			$("#switch").click(function(){
 				$('#edit_tab').toggleClass("open",500);
@@ -497,7 +613,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					description:$("#product_desc").val(),
 					img_data:img_data
 				};
-				console.log(product_form);
+//				console.log(product_form);
 				function suc_cb(data){
 					if(data.authed){
 						$.ajax({
