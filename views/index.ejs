@@ -184,105 +184,32 @@ If no keywrd specified, list all products in that category.">Search Item</button
 	</div>
 	
 	<div id="content">
-		<ul id="product_list_frame" style="position:absolute; width:950px;height:600px;top:70px; left:10px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto;">
+		<ul id="product_list_frame" style="position:absolute; width:950px;height:600px;top:70px; 
+		left:10px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto;">
 			<li>
 				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px; ">
-					<div id="preview" style="border:1px solid purple;width:150px; height:150px;"></div>
-					<div id="product_table" style="position:absolute; top:20px; left:200px;">
+					<div class="p_logo" style="background:url('images/index.png');border:1px solid gray;width:150px; height:150px;"></div>
+					<div class="p_table" style="position:absolute; top:20px; left:200px;">
 						<table style="margin-top:20px;">
 							<tr>
-								<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
 								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4><textarea id="product_desc" rows=4  maxlength="200" style="width:160px; 
+								<td rowspan=4><textarea class="p_desc" rows=4  maxlength="200" style="width:160px; 
 								height:90px; resize:none; border:1px solid gray;"></textarea></td>
 							</tr>
 							<tr>
-								<td>category</td><td><select id="product_category" class="category"></select></td>
+								<td>category</td><td><select class="category"></select></td>
 							</tr>
 							<tr>
-								<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
 							</tr>
 							<tr>
-								<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
 							</tr>
 						</table>
 					</div>
-					<button id="edit_product" style="position: absolute; width:100px; height:100px; left:710px; top:40px;">Update Item</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px;">
-					<div id="preview" style="border:1px solid purple;width:150px; height:150px;"></div>
-					<div id="product_table" style="position:absolute; top:20px; left:200px;">
-						<table style="margin-top:20px;">
-							<tr>
-								<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4><textarea id="product_desc" rows=4  maxlength="200" style="width:160px; 
-								height:90px; resize:none; border:1px solid gray;"></textarea></td>
-							</tr>
-							<tr>
-								<td>category</td><td><select id="product_category" class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button id="edit_product" style="position: absolute; width:100px; height:100px; left:710px; top:40px;">Update Item2</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px;">
-					<div id="preview" style="border:1px solid purple;width:150px; height:150px;"></div>
-					<div id="product_table" style="position:absolute; top:20px; left:200px;">
-						<table style="margin-top:20px;">
-							<tr>
-								<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4><textarea id="product_desc" rows=4  maxlength="200" style="width:160px; 
-								height:90px; resize:none; border:1px solid gray;"></textarea></td>
-							</tr>
-							<tr>
-								<td>category</td><td><select id="product_category" class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button id="edit_product" style="position: absolute; width:100px; height:100px; left:710px; top:40px;">Update Item2</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px;">
-					<div id="preview" style="border:1px solid purple;width:150px; height:150px;"></div>
-					<div id="product_table" style="position:absolute; top:20px; left:200px;">
-						<table style="margin-top:20px;">
-							<tr>
-								<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4><textarea id="product_desc" rows=4  maxlength="200" style="width:160px; 
-								height:90px; resize:none; border:1px solid gray;"></textarea></td>
-							</tr>
-							<tr>
-								<td>category</td><td><select id="product_category" class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button id="edit_product" style="position: absolute; width:100px; height:100px; left:710px; top:40px;">Update Item2</button>
+					<button id="edit_product" style="position: absolute; width:100px; height:100px; 
+					left:710px; top:40px;">Update Item</button>
 				</div>
 			</li>
 		</ul>
@@ -295,7 +222,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		<div id="switch"><br><br><br><br>◄</div>
 		<div id="preview_frame">
 			<input type="file" id="img_file" style="display:none;" />
-			<canvas id="preview" width=150 height=150></canvas>
+			<canvas id="preview" style="background:url('images/index.png;')" width=150 height=150></canvas>
 		</div>
 		<div id="product_info">
 			<table>
@@ -347,7 +274,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					type:"POST",
 					datatype:'JSON',
 					success: suc_cb,
-					error: err_cb
+					error: err_cb||function(err){ alert(err+'Authentication failed. Please try to login again.'); }
 				});
 			};
 			
@@ -359,7 +286,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					type:"POST",
 					datatype:'JSON',
 					success: suc_cb,
-					error:err_cb
+					error:err_cb||function(){alert('Failed to get category info.');}
 				});
 			};
 			
@@ -375,7 +302,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					error:err_cb
 				});
 			};
-			
+
 			// fill a DOM element with a page num link, each link init one request
 			function generate_page_number(tag, n_perpage, req_fun){
 				
@@ -399,9 +326,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					$('.category').html(category_list);
 					$('.category').attr('selected_id',data[0].id);
 				};
-				function err_cb(){
-					alert("Fail to get category info.")
-				};
+
 				get_category_info(suc_cb, err_cb);
 			};
 
@@ -429,10 +354,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 						$('#passwd').show();
 					}
 				};
-				function err_cb(err){
-					alert('Login Error!');
-				};
-				auth_user(suc_cb, err_cb);
+				auth_user(suc_cb);
 			};
 
 
@@ -644,10 +566,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 						alert("User not authenticated.");
 					}
 				};
-				function err_cb(err){
-					alert("Fail to talk to auth server.");
-				};
-				auth_user(suc_cb, err_cb);				
+				auth_user(suc_cb);				
 			});
 
 

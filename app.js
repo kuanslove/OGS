@@ -82,16 +82,26 @@ app.post('/a_product/', function(req, res){
 				return console.error('Error to connect. ', err);
 			}
 			else {			
-				var qstring="INSERT INTO products (name, description, price, user_id, category_id, amnt, img) VALUES ($1,$2,$3,$4,$5,$6,$7)";
+				
+				var qstring="INSERT INTO products (name, description, price, user_id, \
+				category_id, amnt, img) VALUES ($1,$2,$3,$4,$5,$6,$7)";
 				var fm = req.body.product_info;
-				var placeholder=[fm.name,fm.description,fm.price, req.session.user_id,fm.category,fm.amount,fm.img_data];
+				var placeholder=[fm.name,fm.description,fm.price, req.session.user_id,
+				fm.category,fm.amount,fm.img_data||'images/logo.png'];
 				client.query(qstring, placeholder,function(err, result){
 					done();
+					if(err){
+						console.log("insert failed");
+						console.log(err);
+						console.log(result);	
+						res.json({suc:false,record:[]});
+					}
+					else {
+						console.log('insert succeed');
+						res.json({suc:true,record:result.rows});
+					}
 				});	
 			}
-
-
-
 		});
 	}
 });
