@@ -18,7 +18,7 @@ var app = express();
 
 function set_env(){
 	// all environments
-	app.set('http_port', process.env.PORT || 80);
+	app.set('http_port', process.env.PORT || 3000);
 	app.set('https_port', process.env.PORT || 443);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'ejs');
@@ -43,7 +43,8 @@ function check_https(req, res){
 		return true;
 	}
 	else {
-		res.redirect("https://localhost"+req.url);
+		res.redirect("https://"+req.get('host').slice(0,-5)+req.url);
+		//~ res.redirect("https://localhost"+req.url);
 		return false;
 	}
 };
@@ -97,6 +98,7 @@ function build_product_sql(r){
 
 // this handler is just for test
 app.get("/test/", function(req, res){
+	console.log("https://"+req.get('host')+req.url);
 		get_init_product(req, res,
 									{
 										keywd:['1','12','3'],
@@ -154,6 +156,9 @@ app.get('/user/', function(req,res){
 });
 
 app.get('/', function(req, res){
+	
+	
+	
 	if(check_https(req,res)){
 
 		res.render('test', { title: 'Express' });
