@@ -11,6 +11,7 @@
 		body {
 			margin:0px;
 			padding:0px;
+			background:url("images/index.png");
 		}
 
 
@@ -48,7 +49,7 @@
 		}
 		
 		#content {
-			background-color:rgba(221,221,221,0.6);
+			background-color:rgba(221,221,221,0.8);
 			box-shadow: 0 0 5px 1px black;
 			bottom:0px;
 			top:0px;
@@ -75,7 +76,7 @@
 			right: 0px;
 			height:200px;
 			width:21px;
-			background-color:rgba(221,221,221,1);
+			background-color:rgba(221,221,221,0.9);
 			box-shadow: 0 0 5px 1px black;
 			border-bottom-left-radius:15px;
 			border-top-left-radius:15px;
@@ -86,7 +87,7 @@
 			right: 0px;
 			height:200px;
 			width:601px;
-			background-color:rgba(221,221,221,1);
+			background-color:rgba(221,221,221,0.9);
 			box-shadow: 0 0 5px 1px black;
 			border-bottom-left-radius:15px;
 			border-top-left-radius:15px;
@@ -130,10 +131,10 @@
 		}
 		#preview_frame {
 			position:absolute;
-			left:45px;
+			left:65px;
 			top:20px;
-			height:160px; 
-			width:160px;
+			height:110px; 
+			width:110px;
 			border-radius:10px;
 			border:2px dashed gray;
 		}
@@ -151,6 +152,10 @@
 		}
 		td {
 			border:0px solid gray;
+		}
+		#product_list_frame li {
+			color:rgba(100,100,100,1);
+			text-shadow:2px 0px rgba(250,250,250,1);
 		}
 	</style>
 </head>
@@ -184,13 +189,14 @@ If no keywrd specified, list all products in that category.">Search Item</button
 	</div>
 	
 	<div id="content">
-		<ul id="product_list_frame" style="position:absolute; width:950px;height:600px;top:70px; 
-		left:10px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto;">
-			<li>
+		<ul id="product_list_frame" style="position:absolute; width:90%;height:600px;top:70px; 
+		left:40px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto; ">
+
+			<li style="border-bottom:5px solid rgba(200,200,200,0.5);padding-top:5px; margin:0px;height:120px;">
 				<div class="product_item" style="position:relative; left:50px; width:850px; height:160px; ">
-					<div class="p_logo" style="background:url('images/index.png');border:1px solid gray;width:150px; height:150px;"></div>
-					<div class="p_table" style="position:absolute; top:20px; left:200px;">
-						<table style="margin-top:20px;">
+					<div class="p_logo" style="background:url('images/wawa.png');border:1px solid gray;width:110px; height:110px;"></div>
+					<div class="p_table" style="position:absolute; top:0px; left:150px;">
+						<table style="margin-top:0px;">
 							<tr>
 								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
 								<td rowspan=4 style="vertical-align:top;">description</td>
@@ -208,11 +214,21 @@ If no keywrd specified, list all products in that category.">Search Item</button
 							</tr>
 						</table>
 					</div>
-					<button id="edit_product" style="position: absolute; width:100px; height:100px; 
-					left:710px; top:40px;">Update Item</button>
+					<button id="edit_product" style="position: absolute; width:100px; height:110px; 
+					left:710px; top:0px;">Update Item</button>
 				</div>
 			</li>
+		
 		</ul>
+		<table style="position:absolute; bottom:70px; width:100%;">
+			<tr >
+				<td style="text-align:center;">GO TO PAGE:
+					<select id="page_num"  style="width:50px;" current_offst=0>
+						<option offst=0>1</option>
+					</select>
+				</td>
+			</tr>
+		</table>
 	</div>
 	
 	<div id="footer">	
@@ -222,7 +238,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		<div id="switch"><br><br><br><br>◄</div>
 		<div id="preview_frame">
 			<input type="file" id="img_file" style="display:none;" />
-			<canvas id="preview" style="background:url('images/index.png;')" width=150 height=150></canvas>
+			<canvas id="preview" style="background:url('images/index.png;')" width=100 height=100></canvas>
 		</div>
 		<div id="product_info">
 			<table>
@@ -261,8 +277,8 @@ If no keywrd specified, list all products in that category.">Search Item</button
 			
 			
 			
-////////////////////// This part includes important global functions /////////////////////////////////
-			// most client sideoperation should involve this first. 
+////////////////////// This part includes global functions /////////////////////////////////
+			// most client side operation should involve this first. 
 			function auth_user(suc_cb, err_cb){
 			// originally I plan to send out a user_id to server to auth
 			// later I found the cookie can store that info and auto sent with request.
@@ -290,29 +306,30 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				});
 			};
 			
-			function get_product_list_info(suc_cb, err_cb, category_id, disp_num){
+			function get_product_list_info(suc_cb, err_cb, req_info){
 				// return data contains total number of products, first page list
 				// 
 				$.ajax({
 					url:"/s_category/"+category_id+"/product/",
 					type:"POST",
 					datatype:"JSON",
-					data:{offset:offset},
+					data:req_info,// here we need to do more work.
 					success:suc_cb,
-					error:err_cb
+					error:err_cb||function(){alert("Failed to get products info.");}
 				});
 			};
 
-			// fill a DOM element with a page num link, each link init one request
-			function generate_page_number(tag, n_perpage, req_fun){
+			function get_cur_category(){
 				
 			};
+			
+			function get_search_keywd(){
+				
+			};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////			
 				
-				
-				
-				
-
+			
 
 			// this part is for query initial data to fill out category and 
 			// according product list within that category
@@ -327,7 +344,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					$('.category').attr('selected_id',data[0].id);
 				};
 
-				get_category_info(suc_cb, err_cb);
+				get_category_info(suc_cb);
 			};
 
 			// this part is for checking if a user logged in, and send back to client side
@@ -371,20 +388,19 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				else {
 					$("#header,#footer").css("left",0);
 				}
-				var ww = $(window).width();
-				var hw = $("#content").width();
-				if((ww-hw)/2 > 0){
-					$("#content").css("left",(ww-hw)/2);
+				
+				var cw = $("#content").width();
+				if((ww-cw)/2 > 15){
+					$("#content").css("left",(ww-cw)/2-15);
 				}
 				else {
 					$("#content").css("left",0);
 				}
 				
 				var wh = $(window).height();
-				var hw = $("#header").height();
-				console.log(hw);
-				var plfh = wh-2*hw;
-				$('#product_list_frame').height(plfh-10);
+				var hh = $("#header").height();
+				var plfh = wh-2*hh;
+				$('#product_list_frame').height(plfh-50);
 				
 				
 				fill_category();	
@@ -449,11 +465,9 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				else {
 					$("#header,#footer").css("left",0);
 				}
-				
-				var ww = $(window).width();
-				var hw = $("#content").width();
-				if((ww-hw)/2 > 0){
-					$("#content").css("left",(ww-hw)/2);
+				var cw = $("#content").width();
+				if((ww-cw)/2 > 15){
+					$("#content").css("left",(ww-cw)/2-15);
 				}
 				else {
 					$("#content").css("left",0);
@@ -461,10 +475,10 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				
 				
 				var wh = $(window).height();
-				var hw = $("#header").height();
+				var hh = $("#header").height();
 				console.log(hw);
-				var plfh = wh-2*hw;
-				$('#product_list_frame').height(plfh-10);
+				var plfh = wh-2*hh;
+				$('#product_list_frame').height(plfh-50);
 				
 			});
 		
@@ -481,12 +495,11 @@ If no keywrd specified, list all products in that category.">Search Item</button
 			$("#preview").click(function(){
 				$("#img_file").click();
 				});
-		
+
 			$("#img_file").change(function(){
 				window.URL = window.URL || window.webkitURL;
 				
 				var f = document.getElementById('img_file').files[0];
-
 				if(f!=undefined){
 
 	// Give image data to an image object
@@ -497,7 +510,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					var ctx = preview.getContext('2d');
 
 					img.onload = function(){
-						var MAX_LEN=150;
+						var MAX_LEN=100;
 						
 						var w = this.width;
 						var h = this.height;

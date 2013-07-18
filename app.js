@@ -27,7 +27,7 @@ function set_env(){
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.cookieParser('you can never crack this secret key, can you?'));
-	app.use(express.session({ cookie:{ maxAge:6000000} }));
+	app.use(express.session());
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 
@@ -48,10 +48,115 @@ function check_https(req, res){
 	}
 };
 
+
+// First, we parse r to figure out SQL query string.
+function build_product_sql(r){
+	
+	var sql="SELECT * FROM products WHERE n_a=false ";
+	var holder_index;
+	var params = [];
+	
+	if(r.keywd){
+		var placeholder = [];
+		for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
+			placeholder.push('$'+(holder_index));
+			params.push('%'+r.keywd[holder_index-1]+'%');
+		}
+		sql+="AND (name LIKE ANY (array["+placeholder.join(",")+"]) ";
+
+		var placeholder = [];
+		for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
+			placeholder.push('$'+(holder_index+r.keywd.length));
+			params.push('%'+r.keywd[holder_index-1]+'%');
+		}
+		sql+="OR description LIKE ANY (array["+placeholder.join(",")+"])) ";
+	}
+	holder_index = 2*r.keywd.length+1;
+		
+	if(r.category_id){
+		params.push(r.category_id);
+		sql+="AND category_id=$"+(holder_index++)+" ";
+	}
+	
+	sql+="ORDER BY date_rev ";
+	
+	if(r.result_num){
+		params.push(r.result_num);
+		sql+="LIMIT $"+(holder_index++)+" ";
+	}
+	
+	if(r.offst){
+		params.push(r.offst);
+		sql+="OFFSET $"+(holder_index++)+" ";
+	}
+	
+	//~ console.log({sql:sql, params:params});
+	return {sql:sql, params:params};
+	//~ return sql;
+};
+
+// this handler is just for test
+app.get("/test/", function(req, res){
+		get_init_product(req, res,
+									{
+										keywd:['1','12','3'],
+										category_id:2,
+										result_num:6,
+										offst:2
+									}
+		);
+		
+});
+
+function get_init_product(req, res, r){
+	
+	var qq = build_product_sql(r);
+	
+	pg.connect(constring, function(err, client, done){
+		if(err){
+			done();
+			return console.error('Error to connect. ', err);
+		}
+		else {
+			var qstring=qq.sql;
+			client.query(qstring, qq.params, function(err, result){
+				done();
+				if(err){
+					console.log(err);
+				}
+				else {
+					res.json(result);
+				}
+			});
+		}
+	});		
+};
+
+app.get('/user/', function(req,res){
+	pg.connect(constring, function(err, client, done){
+		if(err){
+			done();
+			return console.error('Error to connect. ', err);
+		}
+		else {
+			var qstring="select * from users";
+			client.query(qstring, function(err, result){
+				done();
+				if(err){
+					return console.error('Error to fetch data. ', err);
+				}
+				else {
+					res.json(result);
+				}
+			});
+		}
+	});
+});
+
 app.get('/', function(req, res){
 	if(check_https(req,res)){
-		console.log(req.protocol);
-		res.render('index', { title: 'Express' });
+
+		res.render('test', { title: 'Express' });
 	}
 });
 app.post('/s_category/',function(req,res){
@@ -187,4 +292,5 @@ function start_server(){
 	});
 };
 start_server();
+
 
