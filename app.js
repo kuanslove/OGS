@@ -59,7 +59,7 @@ function build_product_sql(r){
 										result_num:6,
 										offst:2
 									}
-	the built string should like:
+	the built string should look like:
 	
 	SELECT id, name, description
     , (SELECT count(*)
@@ -172,7 +172,7 @@ function get_init_product(req, res, r){
 	});		
 };
 
-// this handler is just for test
+// this handler is just for test the query
 app.get("/test/", function(req, res){
 	console.log("https://"+req.get('host')+req.url);
 		get_init_product(req, res,
@@ -215,24 +215,26 @@ app.get('/', function(req, res){
 	}
 });
 app.post('/s_category/',function(req,res){
-	pg.connect(constring, function(err, client, done){
-		if(err){
-			done();
-			res.send(501, 'Sorry, server is busy playing XBOX right now!');
-		}
-		else {
-			var qstring="select * from category where n_a=false";
-			client.query(qstring, function(err, result){
+	if(check_https(req,res)) {
+		pg.connect(constring, function(err, client, done){
+			if(err){
 				done();
-				if(err){
-					res.send(400, 'Sorry, query is sleeping!');
-				}
-				else {
-					res.json(result.rows);
-				}
-			});
-		}
-	});
+				res.send(501, 'Sorry, server is busy playing XBOX right now!');
+			}
+			else {
+				var qstring="select * from category where n_a=false";
+				client.query(qstring, function(err, result){
+					done();
+					if(err){
+						res.send(400, 'Sorry, query is sleeping!');
+					}
+					else {
+						res.json(result.rows);
+					}
+				});
+			}
+		});
+	}
 });
 app.post('/a_product/', function(req, res){
 	if(check_https(req,res)) {
