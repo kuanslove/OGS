@@ -60,7 +60,7 @@ function build_product_sql(r){
 										offst:2
 									}
 	the built string should look like:
-	
+	* 
 	WITH p AS (
 			SELECT *
 			FROM products
@@ -181,8 +181,8 @@ app.get("/test/", function(req, res){
 									{
 										keywd:['1','12','3'],
 										category_id:2,
-										result_num:20,
-										offst:0
+										result_num:6,
+										offst:2
 									}
 		);
 		
@@ -213,7 +213,7 @@ app.get('/user/', function(req,res){
 });
 app.get('/', function(req, res){
 	if(check_https(req,res)){
-		res.render('test', { title: 'Express' });
+		res.render('index', { title: 'Express' });
 	}
 });
 app.post('/s_category/',function(req,res){
