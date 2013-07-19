@@ -1,0 +1,905 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>untitled</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<style>
+		body {
+			margin:0px;
+			padding:0px;
+			background-color:steelblue;
+			background:url("images/tile2.jpg");
+		}
+
+
+		#header {
+			height:60px;
+			width:100%;
+			top:0px;
+			position:fixed;
+			background-color:rgba(221,221,221,0.6);
+			box-shadow: 0 0 15px 1px black;
+			border-bottom-left-radius:15px;
+			border-bottom-right-radius:15px;
+		}
+		
+/*
+		@media screen and (min-width:1400px) {
+			#header,#footer {
+				width:1100px;
+			}
+			#content {
+				position:fixed;
+				width:1200px;
+			}
+		}
+*/
+		#header, #footer {
+			width:900px;
+		}
+		#content {
+			position:fixed;
+			width:1000px;
+		}
+		
+		#header, #footer{
+			border:1px solid rgba(250,250,250,0.6);
+			z-index:5;
+		}
+		
+		#content {
+			background-color:rgba(221,221,221,0.9);
+			box-shadow: 0 0 15px 2px black;
+			bottom:0px;
+			top:0px;
+			border-left:2px solid rgba(250,250,250,0.8);
+			border-right:2px solid rgba(250,250,250,0.8);
+			padding-top:80px;
+			padding-left:30px;
+		}
+
+		.category {
+			position:relative;
+			width:160px;
+		}		
+		#footer {
+			height:50px;
+			position:fixed;
+			bottom:0px;
+			background-color:rgba(221,221,221,0.6);
+			box-shadow: 0 0 15px 1px black;
+			border-top-left-radius:15px;
+			border-top-right-radius:15px;
+		}
+		#edit_tab {
+			position:fixed;
+			top:400px;
+			right: 0px;
+			height:200px;
+			width:21px;
+			background-color:rgba(221,221,221,0.8);
+			box-shadow: 0 0 5px 1px black;
+			border-bottom-left-radius:15px;
+			border-top-left-radius:15px;
+		}
+		#edit_tab.open {
+			position:fixed;
+			top:200px;
+			right: 0px;
+			height:200px;
+			width:601px;
+			background-color:rgba(221,221,221,0.8);
+			box-shadow: 0 0 5px 1px black;
+			border-bottom-left-radius:15px;
+			border-top-left-radius:15px;
+		}
+		#switch {
+			position:absolute;
+			width:20px;
+			height:200px;
+			background-color:rgba(200,200,200,1);
+			left:0px;
+			border-bottom-left-radius:15px;
+			border-top-left-radius:15px;
+			padding-left:5px;
+		}
+		#login_area {
+			//border:1px solid pink;
+			width:900px;
+			position:relative;
+			left:20px;
+			top:5px;
+		}
+		#search_area {
+			//border:1px solid pink;
+			width:900px;
+			position:absolute;
+			left:400px;
+			top:15px;
+		}
+		input[type=text],input[type=password] {
+			border-style:none;
+			margin-top:0px; 
+			margin-bottom:0px;
+			width:160px;
+			background-color:rgba(250,250,250,0.6);
+		}
+		textarea {
+			border:0px;
+			background-color:rgba(250,250,250,0.6);
+			width:160px; 
+			height:90px;
+			resize:none;
+		}
+		textarea .p_desc{
+			border:0px;
+			background-color:rgba(250,250,250,0.6);
+		}
+		select {
+			border-style:none;
+			background-color:rgba(250,250,250,0.3);
+		}
+		option {
+			
+		}
+		#email.textlabel {
+			border:none;
+			background-color:rgba(0,0,0,0);
+		}
+		button {
+			background-color:rgba(220,220,220,0.6);
+			text-shadow:2px 0px rgba(250,250,250,1);
+			color:rgba(100,100,100,1); 
+		}
+		#preview_frame {
+			position:absolute;
+			left:65px;
+			top:20px;
+			height:110px; 
+			width:110px;
+			border-radius:10px;
+			border:2px dashed rgba(250,250,250,0.9);
+			color:rgba(100,100,100,1);
+			text-shadow:2px 0px rgba(250,250,250,1);
+			font-size:15px;
+		}
+		#preview {
+			position:relative;
+			left:5px;
+			top:5px;
+		}
+		#product_info {
+			position:absolute;
+			top:9px;
+			left:229px;
+			width:370px;
+		}
+		td {
+			border:0px solid gray;
+		}
+		#product_list_frame li {
+			color:rgba(100,100,100,1);
+			text-shadow:2px 0px rgba(250,250,250,1);
+			border-bottom:2px solid rgba(230,230,230,0.8);
+			padding-top:5px; 
+			margin:0px;
+			height:120px;
+		}
+		#product_list_frame .product_item {
+			position:relative;
+			left:50px;
+			width:850px;
+			height:160px; 
+		}
+		#product_list_frame .product_item .p_logo {
+			border:1px solid gray;
+			width:110px; 
+			height:110px;
+		}
+		#product_list_frame .product_item .p_table {
+			position:absolute;
+			top:0px;
+			left:150px;
+		}
+		#product_info table tr td {
+			color:rgba(100,100,100,1);
+			text-shadow:2px 0px rgba(250,250,250,1);
+		}
+		.product_item .edit_product {
+			position: absolute;
+			width:80px;
+			height:110px;
+			left:770px;
+			top:0px;
+		}
+	</style>
+</head>
+
+<body>
+	
+	<div id="header">
+		<div id="login_area">
+			<table>
+				<tr>
+					<td style="width:65px;font-size:10px;color:gray;">USEREMAIL</td>
+					<td ><input type="text" value="" title="USER EMAIL" id="email" 
+					style="margin-top:0px; margin-bottom:0px;"></td>
+				</tr>
+				<tr>
+					<td style="width:65px;font-size:10px;color:gray;">PASSWORD</td>
+					<td><input type="password" id="passwd"></td>
+				</tr>
+			</table>
+			
+			
+			<button id="login" style="position:absolute; top:3px; left:245px;height:45px;">
+				Log In
+			</button>
+		</div>
+		<div id="search_area">
+			<select id="category1" class="category" title="Search in"></select>
+			<input type="text" style="width:200px;" id="keywd" title="Search for">
+			<button id="search" title="Search product in that category.
+If no keywrd specified, list all products in that category.">Search Item</button>
+		</div>
+	</div>
+	
+	<div id="content">
+		<ul id="product_list_frame" style="position:absolute; width:90%;height:600px;top:70px; 
+		left:40px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto; ">
+
+			<li>
+				<div class="product_item">
+					<div class="p_logo"></div>
+					<div class="p_table">
+						<table style="margin-top:0px;">
+							<tr>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4>
+									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>category</td><td><select class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button class="edit_product">Update Product</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item">
+					<div class="p_logo"></div>
+					<div class="p_table">
+						<table style="margin-top:0px;">
+							<tr>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4>
+									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>category</td><td><select class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button class="edit_product">Update Product</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item">
+					<div class="p_logo"></div>
+					<div class="p_table">
+						<table style="margin-top:0px;">
+							<tr>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4>
+									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>category</td><td><select class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button class="edit_product">Update Product</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item">
+					<div class="p_logo"></div>
+					<div class="p_table">
+						<table style="margin-top:0px;">
+							<tr>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4>
+									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>category</td><td><select class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button class="edit_product">Update Product</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item">
+					<div class="p_logo"></div>
+					<div class="p_table">
+						<table style="margin-top:0px;">
+							<tr>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4>
+									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>category</td><td><select class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button class="edit_product">Update Product</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item">
+					<div class="p_logo"></div>
+					<div class="p_table">
+						<table style="margin-top:0px;">
+							<tr>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4>
+									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>category</td><td><select class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button class="edit_product">Update Product</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item">
+					<div class="p_logo"></div>
+					<div class="p_table">
+						<table style="margin-top:0px;">
+							<tr>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4>
+									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>category</td><td><select class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button class="edit_product">Update Product</button>
+				</div>
+			</li>
+			<li>
+				<div class="product_item">
+					<div class="p_logo"></div>
+					<div class="p_table">
+						<table style="margin-top:0px;">
+							<tr>
+								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
+								<td rowspan=4 style="vertical-align:top;">description</td>
+								<td rowspan=4>
+									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>category</td><td><select class="category"></select></td>
+							</tr>
+							<tr>
+								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
+							</tr>
+							<tr>
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
+							</tr>
+						</table>
+					</div>
+					<button class="edit_product">Update Product</button>
+				</div>
+			</li>
+		</ul>
+		<table style="position:absolute; bottom:70px; width:100%;">
+			<tr >
+				<td style="text-align:center;color:rgba(100,100,100,1);	text-shadow:2px 0px rgba(250,250,250,1);">
+					GO TO PAGE:
+					<select id="page_num"  style="width:50px;" current_offst=0>
+						<option offst=0>1</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+	<div id="footer">	
+	</div>
+	
+	<div id="edit_tab">
+		<div id="switch"><br><br><br><br>◄</div>
+		<div id="preview_frame">
+			<input type="file" id="img_file" style="display:none;" />
+			<canvas id="preview" width=100 height=100></canvas>
+			<br><br>Upload Product Logo.
+		</div>
+		<div id="product_info">
+			<table>
+				<tr>
+					<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
+				</tr>
+				<tr>
+					<td>category</td><td><select id="product_category" class="category"></select></td>
+				</tr>
+				<tr>
+					<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
+				</tr>
+				<tr>
+					<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
+				</tr>
+				<tr>
+					<td>description</td>
+					<td><textarea id="product_desc" rows=3 maxlength="200" 
+					style="width:160px; height:60px; resize:none;"></textarea></td>
+				</tr>
+			</table>
+		</div>
+		<button id="add_new" style="position: absolute; width:50px;
+		 height:65px; left:510px; top:120px;">Add Item
+		 </button>
+	</div>
+	
+	<script>
+		
+		var img_data='';
+		var current_product_info=undefined;
+		var current_product_list=undefined;
+		var current_category_info=undefined;
+		var current_category_list=undefined;
+		var current_user_id=undefined;
+		var authenticated=false;
+		
+		jQuery(function($){
+			
+			
+			
+			
+////////////////////// This part includes global functions /////////////////////////////////
+			// most client side operation should involve this first. 
+			function auth_user(suc_cb, err_cb){
+			// originally I plan to send out a user_id to server to auth
+			// later I found the cookie can store that info and auto sent with request.
+			// the returned data will be in JSON format and there is a "authed" var can show if
+			// this user has been authened. The return data will be automatically binded to first 
+			// param of callback function.
+				$.ajax({
+					url:"/auth/",
+					type:"POST",
+					datatype:'JSON',
+					success: suc_cb,
+					error: err_cb||function(err){alert(err.responseText);}
+				});
+			};
+			
+			// this function is for getting all category info from server
+			// data return from server is all category id and name
+			function get_category_info(suc_cb, err_cb){
+				$.ajax({
+					url:"/s_category/",
+					type:"POST",
+					datatype:'JSON',
+					success: suc_cb,
+					error:err_cb||function(){alert('Failed to get category info.');}
+				});
+			};
+			
+			function get_product_list_info(suc_cb, err_cb, req_info){
+				// return data contains total number of products, first page list
+				// 
+				$.ajax({
+					url:"/s_category/"+category_id+"/product/",
+					type:"POST",
+					datatype:"JSON",
+					data:req_info,// here we need to do more work.
+					success:suc_cb,
+					error:err_cb||function(){alert("Failed to get products info.");}
+				});
+			};
+
+
+			// Global control for authentication status
+			function not_authed(){
+				$('#login').text('Log In');
+				$('#email').removeAttr('readonly');
+				$('#email').val('');
+				$('#email').removeClass('textlabel');
+				$('#passwd').val('');
+				$('#passwd').show();
+				$('#email').focus();
+			};
+			function is_authed(data){
+				$('#login').text('Log out');
+				$('#email').val(data.user_email);
+				$('#email').attr('readonly', 'readonly');
+				$('#email').addClass('textlabel');
+				$('#passwd').hide();
+			};
+			//Some utils for form validation
+			function isNumeric(num) {
+			  return !isNaN(parseFloat(num)) && isFinite(num);
+			};
+			function isEmpty(txt){
+				return (txt.trim().length==0);
+			}
+			
+			
+			// One thing to remember, when you want to do a html mangling,
+			// you can use jQuery .text(), it can convert those.
+			
+			
+			//Global Product Form validation
+			function valid_form( p_form ){
+				var tips='';
+/* the form passed in looks like this:
+				var product_form = {
+					name:$("#product_name").val(),
+					category:$("#product_category").attr("selected_id"),
+					price:$("#product_price").val(),
+					amount:$("#product_amnt").val(),
+					description:$("#product_desc").val(),
+					img_data:img_data
+				};
+*/
+				if( isEmpty(p_form.name) ){
+					tips+="You need fill name. ";
+				}
+				if( !isNumeric(p_form.price) ){
+					tips+="You need a valid price number. ";
+				}
+				if( !isNumeric(p_form.amount) ){
+					tips+="You need a valid amount number. ";
+				}
+				if( isEmpty(p_form.description) ){
+					tips+="You need to describe your product."
+				}
+				if(tips.length==0){
+					return {valid:true, tips:tips};
+				}
+				else {
+					return {valid:false, tips:tips};
+				}
+				
+			};
+			
+/////////////////////////////////////////////////////////////////////////////////////////////////////////			
+				
+			
+
+			// this part is for query initial data to fill out category and 
+			// according product list within that category
+			function fill_category(){	
+				function suc_cb(data){
+					// here, the data is an array
+					var category_list='';
+					$.each(data, function(index, val){
+						category_list+='<option class="category_item" category_id='+val.id+'>'+val.name+'</option>';
+					});
+					$('.category').html(category_list);
+					$('.category').attr('selected_id',data[0].id);
+				};
+				get_category_info(suc_cb);
+			};
+
+			// this part is for checking if a user logged in, and send back to client side
+			// to change client login area style(such as lock the login textbox and set logout button)
+			function set_user_login_info(){
+				// when the page first loaded, we need to check if there has been already
+				// user logged-in info, if so, we need lock user login text box and show 
+				// logout button. 
+				function suc_cb(data){
+					//alert(data.message);
+					if(data.authed){
+						is_authed(data);
+					}
+					else {
+						not_authed();
+					}
+				};
+				auth_user(suc_cb);
+			};
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+			function init_load(){
+			// this part is for adjusting the layout
+				var ww = $(window).width();
+				var hw = $("#header").width();
+				if((ww-hw)/2 > 0){
+					$("#header,#footer").css("left",(ww-hw)/2);
+				}
+				else {
+					$("#header,#footer").css("left",0);
+				}
+				
+				var cw = $("#content").width();
+				if((ww-cw)/2 > 15){
+					$("#content").css("left",(ww-cw)/2-15);
+				}
+				else {
+					$("#content").css("left",0);
+				}
+				
+				var wh = $(window).height();
+				var hh = $("#header").height();
+				var plfh = wh-2*hh;
+				$('#product_list_frame').height(plfh-50);
+				
+				
+				fill_category();	
+				set_user_login_info();			
+
+				// this is the end of init_load();	
+			};
+			init_load();
+
+
+
+
+
+			$('#login').click(function(){
+				function suc_cb(data){
+					console.log(data);
+					if(data.login){
+						is_authed(data);
+					}
+					else {
+						not_authed();
+					}
+				};
+			// this function is for login button click
+			// it could be login or logout
+				function user_login(email, passwd, success_cb, error_cb){
+					$.ajax({
+						url:"/login/",
+						type:"POST",
+						datatype:'JSON',
+						data:{
+							'email':email,
+							'passwd':passwd
+						},
+						success: success_cb,
+						error: error_cb||function(err){alert(err.responseText);}
+					});
+				};
+				user_login( $('#email').val().trim(), $('#passwd').val().trim(), suc_cb);
+			});	
+
+			$('.category').change(function(){
+				$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
+				})
+				
+			$("#search").click(function(){
+				alert($("#category1").attr("selected_id"));
+				});
+
+			$(window).resize(function(){
+				var ww = $(window).width();
+				var hw = $("#header").width();
+				if((ww-hw)/2 > 0){
+					$("#header,#footer").css("left",(ww-hw)/2);
+				}
+				else {
+					$("#header,#footer").css("left",0);
+				}
+				var cw = $("#content").width();
+				if((ww-cw)/2 > 15){
+					$("#content").css("left",(ww-cw)/2-15);
+				}
+				else {
+					$("#content").css("left",0);
+				}
+				
+				
+				var wh = $(window).height();
+				var hh = $("#header").height();
+				console.log(hw);
+				var plfh = wh-2*hh;
+				$('#product_list_frame').height(plfh-50);
+				
+			});
+		
+			$("#switch").click(function(){
+				$('#edit_tab').toggleClass("open",500);
+				if($("#switch").html()=="<br><br><br><br>►") {
+					$("#switch").html("<br><br><br><br>◄");
+				}
+				else {
+					$("#switch").html("<br><br><br><br>►");
+				}
+				});			
+			
+			$("#preview").click(function(){
+				$("#img_file").click();
+				});
+
+			$("#img_file").change(function(){
+				window.URL = window.URL || window.webkitURL;
+				
+				var f = document.getElementById('img_file').files[0];
+				if(f!=undefined){
+
+	// Give image data to an image object
+					var img = new Image();
+					img.src = window.URL.createObjectURL(f);
+	// Get the canvas drawing handler
+					var preview = document.getElementById('preview');
+					var ctx = preview.getContext('2d');
+
+					img.onload = function(){
+						var MAX_LEN=100;
+						
+						var w = this.width;
+						var h = this.height;
+					
+						if(w>h){
+							w = MAX_LEN;
+							h = w*this.height/this.width;
+						}
+						else
+						{
+							h = MAX_LEN;
+							w = h*this.width/this.height;
+						}
+						console.log(w+":"+h);
+						ctx.clearRect(0,0,MAX_LEN,MAX_LEN);
+						ctx.drawImage(img, 0,0,w,h);
+					};
+				}
+			//this is the end of img_file change.	
+			});	
+			
+			$('#add_new').click(function(){
+				// client provides product info( self-info, category_id), server uses 
+				// session user_id, use date() as date_reg, date_rev
+				
+				
+				//get image data and build the post form
+				var preview = document.getElementById('preview');
+				var img_data = preview.toDataURL();
+				var product_form = {
+					name:$("#product_name").val(),
+					category:$("#product_category").attr("selected_id"),
+					price:$("#product_price").val(),
+					amount:$("#product_amnt").val(),
+					description:$("#product_desc").val(),
+					img_data:img_data
+				};
+				
+				function blank_form(){
+					// After successful posting, we need to load a new empty form
+					$("#product_name").val("");
+					$("#product_price").val("");
+					$("#product_amnt").val("");
+					$("#product_desc").val("");
+				};
+				
+				function suc_cb(data){
+					if(data.authed){
+						$.ajax({
+							url:"/a_product/",
+							type:"POST",
+							data:{
+								product_info:product_form,
+							},
+							datatype:"JSON",
+							success:function(sts){
+								// if server updata this product info,
+								// it will return sts.cuc==true and allow 
+								// this page to update product list.
+								if(sts.suc){
+									alert("New product added");
+									// here should add update product list.
+									blank_form();
+								}
+								else {
+									alert("Please check login info.");
+								}
+							},
+							error:function(err){alert(err.responseText);}
+						});
+					}
+					else {
+						alert("User not authenticated.");
+						//not_authed();
+					}
+				};
+				
+				var v = valid_form(product_form);
+				if(v.valid){
+					auth_user(suc_cb);
+				}
+				else {
+					alert(v.tips);
+				}
+				
+			});
+
+
+
+
+
+
+
+
+
+
+			
+			// this is the end of jQuery(function($))
+			});
+	</script>
+	
+</body>
+
+</html>
