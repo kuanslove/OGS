@@ -49,7 +49,7 @@
 		}
 		
 		#content {
-			background-color:rgba(221,221,221,0.8);
+			background-color:rgba(221,221,221,0.9);
 			box-shadow: 0 0 5px 1px black;
 			bottom:0px;
 			top:0px;
@@ -290,7 +290,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					type:"POST",
 					datatype:'JSON',
 					success: suc_cb,
-					error: err_cb||function(err){ alert(err+'Authentication failed. Please try to login again.'); }
+					error: err_cb||function(err){alert(err.responseText);}
 				});
 			};
 			
@@ -319,14 +319,26 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				});
 			};
 
-			function get_cur_category(){
-				
+
+			// Global control for authentication status
+			function not_authed(){
+				$('#login').text('Log In');
+				$('#email').removeAttr('readonly');
+				$('#email').val('');
+				$('#email').removeClass('textlabel');
+				$('#passwd').val('');
+				$('#passwd').show();
+				$('#email').focus();
+			};
+			function is_authed(data){
+				$('#login').text('Log out');
+				$('#email').val(data.user_email);
+				$('#email').attr('readonly', 'readonly');
+				$('#email').addClass('textlabel');
+				$('#passwd').hide();
 			};
 			
-			function get_search_keywd(){
-				
-			};
-
+			
 /////////////////////////////////////////////////////////////////////////////////////////////////////////			
 				
 			
@@ -343,7 +355,6 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					$('.category').html(category_list);
 					$('.category').attr('selected_id',data[0].id);
 				};
-
 				get_category_info(suc_cb);
 			};
 
@@ -354,28 +365,19 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				// user logged-in info, if so, we need lock user login text box and show 
 				// logout button. 
 				function suc_cb(data){
+					//alert(data.message);
 					if(data.authed){
-						alert(data.message);
-						$('#login').text('Log out');
-						$('#email').attr('readonly', 'readonly');
-						$('#email').addClass('textlabel');
-						$('#email').val(data.user_email);
-						$('#passwd').hide();
+						is_authed(data);
 					}
 					else {
-						alert(data.message);
-						$('#login').text('Log In');
-						$('#email').removeAttr('readonly');
-						$('#email').removeClass('textlabel');
-						$('#email').val("");
-						$('#passwd').show();
+						not_authed();
 					}
 				};
 				auth_user(suc_cb);
 			};
 
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 			function init_load(){
@@ -410,28 +412,22 @@ If no keywrd specified, list all products in that category.">Search Item</button
 			};
 			init_load();
 
+
+
+
+
 			$('#login').click(function(){
 				function suc_cb(data){
-					if(data.authed){
-						alert('hoho');
-						current_user_id=data.user_id;
-						$('#login').text('Log out');
-						$('#email').attr('readonly', 'readonly');
-						$('#email').addClass('textlabel');
-						$('#passwd').hide();
+					console.log(data);
+					if(data.login){
+						is_authed(data);
 					}
 					else {
-						$('#login').text('Log In');
-						$('#email').removeAttr('readonly');
-						$('#email').removeClass('textlabel');
-						$('#passwd').show();
-						alert("Please check user email and password!");
+						not_authed();
 					}
 				};
-				function err_cb(err){
-					alert('Login Error!');
-				};
 			// this function is for login button click
+			// it could be login or logout
 				function user_login(email, passwd, success_cb, error_cb){
 					$.ajax({
 						url:"/login/",
@@ -442,10 +438,10 @@ If no keywrd specified, list all products in that category.">Search Item</button
 							'passwd':passwd
 						},
 						success: success_cb,
-						error: error_cb
+						error: error_cb||function(err){alert(err.responseText);}
 					});
 				};
-				user_login( $('#email').val().trim(), $('#passwd').val().trim(), suc_cb, err_cb );
+				user_login( $('#email').val().trim(), $('#passwd').val().trim(), suc_cb);
 			});	
 
 			$('.category').change(function(){
@@ -537,7 +533,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				// session user_id, use date() as date_reg, date_rev
 				
 				
-				//get image data
+				//get image data and build the post form
 				var preview = document.getElementById('preview');
 				var img_data = preview.toDataURL();
 				var product_form = {
@@ -548,7 +544,15 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					description:$("#product_desc").val(),
 					img_data:img_data
 				};
-//				console.log(product_form);
+				
+				function blank_form(){
+					// After successful posting, we need to load a new empty form
+					$("#product_name").val("");
+					$("#product_price").val("");
+					$("#product_amnt").val("");
+					$("#product_desc").val("");
+				};
+				
 				function suc_cb(data){
 					if(data.authed){
 						$.ajax({
@@ -565,18 +569,18 @@ If no keywrd specified, list all products in that category.">Search Item</button
 								if(sts.suc){
 									alert("New product added");
 									// here should add update product list.
+									blank_form();
 								}
 								else {
 									alert("Please check login info.");
 								}
 							},
-							error:function(err){
-								alert("Product info uploading failed.");
-							}
+							error:function(err){alert(err.responseText);}
 						});
 					}
 					else {
 						alert("User not authenticated.");
+						//not_authed();
 					}
 				};
 				auth_user(suc_cb);				

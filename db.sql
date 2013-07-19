@@ -21,7 +21,7 @@ CREATE TABLE users (
 id serial primary key not null,
 name varchar(50) not null,
 email varchar(50) not null,
-pswd varchar(20) not null,
+pswd varchar(200) not null,
 admn boolean not null default false,
 n_a boolean not null default false);
 
