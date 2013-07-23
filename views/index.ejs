@@ -12,7 +12,7 @@
 			margin:0px;
 			padding:0px;
 			background-color:steelblue;
-			background:url("images/tile2.jpg");
+			background:url("images/cloud.jpg");
 		}
 
 
@@ -27,17 +27,6 @@
 			border-bottom-right-radius:15px;
 		}
 		
-/*
-		@media screen and (min-width:1400px) {
-			#header,#footer {
-				width:1100px;
-			}
-			#content {
-				position:fixed;
-				width:1200px;
-			}
-		}
-*/
 		#header, #footer {
 			width:900px;
 		}
@@ -52,7 +41,7 @@
 		}
 		
 		#content {
-			background-color:rgba(221,221,221,0.9);
+			background-color:rgba(221,221,221,0.8);
 			box-shadow: 0 0 15px 2px black;
 			bottom:0px;
 			top:0px;
@@ -151,9 +140,12 @@
 			background-color:rgba(0,0,0,0);
 		}
 		button {
-			background-color:rgba(220,220,220,0.6);
-			text-shadow:2px 0px rgba(250,250,250,1);
+			background-color:rgba(220,220,220,0.3);
+			text-shadow:1px 0px rgba(250,250,250,1);
 			color:rgba(100,100,100,1); 
+		}
+		button:hover {
+			background-color:rgba(220,220,220,0.6);
 		}
 		#preview_frame {
 			position:absolute;
@@ -215,6 +207,23 @@
 			height:110px;
 			left:770px;
 			top:0px;
+			color:gray;
+			background-color:rgba(10,220,10,0.3);
+		}
+		.product_item .edit_product:hover {
+			background-color:rgba(10,220,10,0.6);
+		}
+		.product_item .del_product {
+			position: absolute;
+			width:80px;
+			height:110px;
+			left:680px;
+			top:0px;
+			color:gray;
+			background-color:rgba(220,10,10,0.3);
+		}
+		.product_item .del_product:hover {
+			background-color:rgba(220,10,10,0.6);
 		}
 	</style>
 </head>
@@ -252,214 +261,6 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		<ul id="product_list_frame" style="position:absolute; width:90%;height:600px;top:70px; 
 		left:40px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto; ">
 
-			<li>
-				<div class="product_item">
-					<div class="p_logo"></div>
-					<div class="p_table">
-						<table style="margin-top:0px;">
-							<tr>
-								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4>
-									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>category</td><td><select class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button class="edit_product">Update Product</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item">
-					<div class="p_logo"></div>
-					<div class="p_table">
-						<table style="margin-top:0px;">
-							<tr>
-								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4>
-									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>category</td><td><select class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button class="edit_product">Update Product</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item">
-					<div class="p_logo"></div>
-					<div class="p_table">
-						<table style="margin-top:0px;">
-							<tr>
-								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4>
-									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>category</td><td><select class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button class="edit_product">Update Product</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item">
-					<div class="p_logo"></div>
-					<div class="p_table">
-						<table style="margin-top:0px;">
-							<tr>
-								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4>
-									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>category</td><td><select class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button class="edit_product">Update Product</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item">
-					<div class="p_logo"></div>
-					<div class="p_table">
-						<table style="margin-top:0px;">
-							<tr>
-								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4>
-									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>category</td><td><select class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button class="edit_product">Update Product</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item">
-					<div class="p_logo"></div>
-					<div class="p_table">
-						<table style="margin-top:0px;">
-							<tr>
-								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4>
-									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>category</td><td><select class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button class="edit_product">Update Product</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item">
-					<div class="p_logo"></div>
-					<div class="p_table">
-						<table style="margin-top:0px;">
-							<tr>
-								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4>
-									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>category</td><td><select class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button class="edit_product">Update Product</button>
-				</div>
-			</li>
-			<li>
-				<div class="product_item">
-					<div class="p_logo"></div>
-					<div class="p_table">
-						<table style="margin-top:0px;">
-							<tr>
-								<td>name</td><td><input type="text" class="p_name" maxlength="50"></td>
-								<td rowspan=4 style="vertical-align:top;">description</td>
-								<td rowspan=4>
-									<textarea class="p_desc" rows=4  maxlength="200"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>category</td><td><select class="category"></select></td>
-							</tr>
-							<tr>
-								<td>price</td><td><input type="text" class="p_price" maxlength="8"></td>
-							</tr>
-							<tr>
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6"></td>
-							</tr>
-						</table>
-					</div>
-					<button class="edit_product">Update Product</button>
-				</div>
-			</li>
 		</ul>
 		<table style="position:absolute; bottom:70px; width:100%;">
 			<tr >
@@ -511,20 +312,27 @@ If no keywrd specified, list all products in that category.">Search Item</button
 	
 	<script>
 		
-		var img_data='';
-		var current_product_info=undefined;
-		var current_product_list=undefined;
-		var current_category_info=undefined;
-		var current_category_list=undefined;
-		var current_user_id=undefined;
-		var authenticated=false;
+
 		
 		jQuery(function($){
 			
+			//global variable for sync ajax request
+			var cur_category_list={};
+			var cur_product_info={};
 			
 			
+			// store current query for changing page.
+			var current_query="";
+			var num_per_page=8;
+
+			// cur_r is used for building product list params
+			var cur_r={};
+
+			var img_data='';
+			var cur_user_id=undefined;
+			var authenticated=false;
 			
-////////////////////// This part includes global functions /////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 			// most client side operation should involve this first. 
 			function auth_user(suc_cb, err_cb){
 			// originally I plan to send out a user_id to server to auth
@@ -540,32 +348,6 @@ If no keywrd specified, list all products in that category.">Search Item</button
 					error: err_cb||function(err){alert(err.responseText);}
 				});
 			};
-			
-			// this function is for getting all category info from server
-			// data return from server is all category id and name
-			function get_category_info(suc_cb, err_cb){
-				$.ajax({
-					url:"/s_category/",
-					type:"POST",
-					datatype:'JSON',
-					success: suc_cb,
-					error:err_cb||function(){alert('Failed to get category info.');}
-				});
-			};
-			
-			function get_product_list_info(suc_cb, err_cb, req_info){
-				// return data contains total number of products, first page list
-				// 
-				$.ajax({
-					url:"/s_category/"+category_id+"/product/",
-					type:"POST",
-					datatype:"JSON",
-					data:req_info,// here we need to do more work.
-					success:suc_cb,
-					error:err_cb||function(){alert("Failed to get products info.");}
-				});
-			};
-
 
 			// Global control for authentication status
 			function not_authed(){
@@ -591,12 +373,15 @@ If no keywrd specified, list all products in that category.">Search Item</button
 			function isEmpty(txt){
 				return (txt.trim().length==0);
 			}
-			
-			
+
+function clone(a) {
+   return JSON.parse(JSON.stringify(a));
+}
+
+				
 			// One thing to remember, when you want to do a html mangling,
 			// you can use jQuery .text(), it can convert those.
 			
-
 			//Global Product Form validation
 			function valid_form( p_form ){
 				var tips='';
@@ -631,24 +416,156 @@ If no keywrd specified, list all products in that category.">Search Item</button
 			};
 			
 /////////////////////////////////////////////////////////////////////////////////////////////////////////			
-				
-			
 
+			
+			// this function is for getting all category info from server
+			// data return from server is all category id and name
+			
+	//!!!!!!! THIS AJAX IS SYNC RATHER THAN ASYNC TO MAKE SURE WE GET THE CAT_INFO FIRST!!!!!!!!!//
+			function get_category(suc_cb, err_cb){
+				$.ajax({
+					url:"/s_category/",
+					type:"POST",
+					datatype:'JSON',
+					success: suc_cb,
+					error:err_cb||function(){alert('Failed to get category info.');},
+					async:false
+				});
+			};
+			
+			function get_product(req_info, suc_cb, err_cb ){
+				// return data contains total number of products, first page list
+				// 
+				$.ajax({
+					url:"/s_product/",
+					type:"POST",
+					datatype:"JSON",
+					data:req_info,// here we need to do more work.
+					success:suc_cb,
+					error:err_cb||function(){alert("Failed to get products info.");},
+					async:false
+				});
+			};
+			
 			// this part is for query initial data to fill out category and 
 			// according product list within that category
-			function fill_category(){	
-				function suc_cb(data){
-					// here, the data is an array
-					var category_list='';
-					$.each(data, function(index, val){
-						category_list+='<option class="category_item" category_id='+val.id+'>'+val.name+'</option>';
-					});
-					$('.category').html(category_list);
-					$('.category').attr('selected_id',data[0].id);
-				};
-				get_category_info(suc_cb);
+			function fill_category(data){
+				// here, the data is an array
+				cur_category_list = {};
+				var category_list='';
+				$.each(data, function(index, val){
+					cur_category_list[val.id] = val.name;
+					category_list+='<option class="category_item" category_id='+val.id+'>'+val.name+'</option>';
+				});
+				$('.category').html(category_list);
+				$('.category').attr('selected_id',data[0].id);
 			};
 
+
+function render_item(params){
+	// the params is only one product item rather than product list, do not be confused by that "s"
+	// it only indicate there are several fields for one product.
+	var tmp_cat_lst=clone(cur_category_list);
+	var cat_lst = '<option class="category_item" category_id='+params.category_id+'>'+tmp_cat_lst[params.category_id]+'</option>';
+	delete tmp_cat_lst[params.category_id];
+	
+	for(var i in tmp_cat_lst){
+		cat_lst+='<option class="category_item" category_id='+i+'>'+tmp_cat_lst[i]+'</option>';
+	}
+	
+	
+	var template ='\
+			<li>\
+				<div class="product_item" p_id='+params.id+' u_id='+params.user_id+'>\
+					<div class="p_logo" style="width:100px; height:100px;background:url('+params.img+');"></div>\
+					<div class="p_table">\
+						<table style="margin-top:0px;">\
+							<tr>\
+								<td>name</td><td><input type="text" class="p_name" maxlength="50" value='+params.id+'></td>\
+								<td rowspan=4 style="vertical-align:top;">description</td>\
+								<td rowspan=4>\
+									<textarea class="p_desc" rows=4  maxlength="200">'+params.description+'</textarea>\
+								</td>\
+							</tr>\
+							<tr>\
+								<td>category</td><td><select class="category">'+cat_lst+'</select></td>\
+							</tr>\
+							<tr>\
+								<td>price</td><td><input type="text" class="p_price" maxlength="8" value='+params.price+'></td>\
+							</tr>\
+							<tr>\
+								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6" value='+params.amnt+'></td>\
+							</tr>\
+						</table>\
+					</div>\
+					<button class="del_product">Delete Product</button>\
+					<button class="edit_product">Update Product</button>\
+				</div>\
+			</li>\
+			';
+		return template;
+};
+
+
+			function fill_product(data){
+					// return product list(data) looks like:
+					/*	{
+							total_num:r_num,
+							page_list:result.rows
+						}
+					*/
+					cur_product_info = clone(data);
+					var p_list_str="No product found.";
+					if(data.page_list.length>0) {
+						p_list_str='';
+						$.each(data.page_list, function(index, val){
+							p_list_str+=render_item(val);
+						});
+					}
+					$("#product_list_frame").html(p_list_str);
+					$(".del_product").click(function(){
+						var del_info = {
+							product_id:$(this).parent().attr('p_id')
+						};
+						
+						// this just a wraper function 
+						function d_product(data){
+							if(data.authed){
+								del_product(del_info, refresh_lst);
+							}
+							else {
+								alert("User not authenticated.");
+							}
+						};
+						
+						auth_user(d_product);
+					});
+										
+			};
+
+			function del_product(del_info, suc_cb, err_cb){
+				// the del_info looks like
+				/*
+				{
+					user_id:
+					product_id:
+				}
+				*/
+				$.ajax({
+					url:"/d_product/",
+					type:"POST",
+					data:del_info,
+					datatype:"JSON",
+					success:function(data){
+						if(data.suc){
+							suc_cb();
+							alert('Product deleted.');
+						}						
+					},
+					error:err_cb||function(err){alert(err.responseText);}
+				});
+			};
+				
 			// this part is for checking if a user logged in, and send back to client side
 			// to change client login area style(such as lock the login textbox and set logout button)
 			function set_user_login_info(){
@@ -667,9 +584,56 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				auth_user(suc_cb);
 			};
 
+			function build_page_list(n){
+				// n is total number of results return
+				var total_pnum = 1;
+				if(n>0){
+					total_pnum = Math.floor(n/num_per_page)+((n%num_per_page==0)?0:1);
+				}
+				console.log(total_pnum);
+				var page_num_list='';
+				for (var i =0; i<total_pnum; i++){
+					page_num_list += "<option offst="+i+">"+(i+1)+"</option>";
+				}
+				$('#page_num').html(page_num_list);
+				$('#page_num').attr('current_offst',0);
+			};
 
+			function refresh_lst(){
+				get_product(cur_r, fill_product);
+				build_page_list(cur_product_info.total_num);
+			};
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function init_category_product(){
+	get_category( fill_category );
+	var init_req = {
+		category_id:cur_category_list[0].id,
+		result_num:num_per_page,
+		offst:0
+	};
+	get_product(init_req, fill_product);
+};
+
+
+// fill cur_r with current page params.
+function bld_qstr(){
+	cur_r={};
+	var category_id = $("#category1").attr("selected_id");
+	
+	cur_r.category_id = category_id;
+	
+	var keywd;
+	if($("#keywd").val().trim().length>0){
+		keywd = $("#keywd").val().trim().split(' ');
+		cur_r.keywd = keywd;
+	}
+	
+	cur_r.result_num = num_per_page;
+	cur_r.offst = 0;
+	//cur_r.offst = $('#page_num').attr('current_offst');
+	console.log(cur_r);
+};
 
 			function init_load(){
 			// this part is for adjusting the layout
@@ -696,15 +660,12 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				$('#product_list_frame').height(plfh-50);
 				
 				
-				fill_category();	
+				get_category(fill_category);	
 				set_user_login_info();			
 
 				// this is the end of init_load();	
 			};
 			init_load();
-
-
-
 
 
 			$('#login').click(function(){
@@ -737,11 +698,13 @@ If no keywrd specified, list all products in that category.">Search Item</button
 
 			$('.category').change(function(){
 				$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
-				})
+			});
 				
 			$("#search").click(function(){
-				alert($("#category1").attr("selected_id"));
-				});
+				bld_qstr();
+				console.log("after build:",cur_r)
+				refresh_lst();
+			});
 
 			$(window).resize(function(){
 				var ww = $(window).width();
@@ -884,9 +847,16 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				}
 			});
 
+			$("#page_num").change(function(){
+				$(this).attr('current_offst',$(this).find("option:selected").attr("offst"));
+				cur_r.offst = $(this).attr('current_offst')*num_per_page;
+				console.log("after change page#:",cur_r);
+				get_product(cur_r, fill_product);
+			});
 
-
-
+// I register DELETE and UPDATE button click event in fill_product() function
+// because we need to register this call back to newly generated elements, otherwise
+// they will never work.
 
 
 
