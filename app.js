@@ -36,7 +36,7 @@ function set_env(){
 	  app.use(express.errorHandler());
 	}
 };
-set_env();
+set_env(); 
 
 function check_https(req, res){
 	if(req.protocol=='https') {
@@ -92,14 +92,14 @@ function build_product_sql(r){
 			placeholder.push('$'+(holder_index));
 			params.push('%'+r.keywd[holder_index-1]+'%');
 		}
-		sql+="AND (name LIKE ANY (array["+placeholder.join(",")+"]) ";
+		sql+="AND (name ILIKE ANY (array["+placeholder.join(",")+"]) ";
 
 		var placeholder = [];
 		for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
 			placeholder.push('$'+(holder_index+r.keywd.length));
 			params.push('%'+r.keywd[holder_index-1]+'%');
 		}
-		sql+="OR description LIKE ANY (array["+placeholder.join(",")+"])) ";
+		sql+="OR description ILIKE ANY (array["+placeholder.join(",")+"])) ";
 		holder_index = 2*r.keywd.length+1;
 	}
 
@@ -114,7 +114,7 @@ function build_product_sql(r){
 	sql+="SELECT *, (SELECT count(*) FROM p) as total FROM p ";
 	
 	
-	sql+="ORDER BY date_rev ";
+	sql+="ORDER BY date_rev DESC ";
 	
 	if(r.result_num){
 		params.push(r.result_num);
@@ -128,8 +128,6 @@ function build_product_sql(r){
 	
 	return {sql:sql, params:params};
 };
-
-//~ function build_
 
 function is_authed(req, res){
 	if(req.session.user_id && req.cookies.user_id){
@@ -148,47 +146,54 @@ function is_authed(req, res){
 	}
 };
 
-
-function get_init_product(req, res, r){
-	
+function get_product(req, res, r){
 	var qq = build_product_sql(r);
 	console.log(qq.sql);
-	//~ res.send(qq.sql);
 	pg.connect(constring, function(err, client, done){
 		if(err){
-			done();
-			return console.error('Error to connect. ', err);
+				done();
+				res.send(501, 'Sorry, server is busy playing XBOX right now!');
 		}
 		else {
 			var qstring=qq.sql;
 			client.query(qstring, qq.params, function(err, result){
 				done();
 				if(err){
-					console.log(err);
+					res.send(404, 'Sorry, insert is sleeping!');
 				}
 				else {
-					res.json(result);
+					var r_num=0;
+					if(result.rowCount==0){
+						r_num=0;
+					}
+					else {
+						r_num=result.rows[0].total;
+					}
+					res.json(
+						{
+							total_num:r_num,
+							page_list:result.rows
+						});
 				}
 			});
 		}
 	});		
 };
 
+
 // this handler is just for test the query
 app.get("/test/", function(req, res){
 	console.log("https://"+req.get('host')+req.url);
-		get_init_product(req, res,
-									{
-										keywd:['1','12','3'],
-										category_id:2,
-										result_num:6,
-										offst:2
-									}
+		get_product(req, res,
+								{
+									keywd:['1','@12','@this'],
+									category_id:2,
+									result_num:3,
+									offst:0
+								}
 		);
 		
 });
-
-
 
 
 app.get('/user/', function(req,res){
@@ -213,6 +218,7 @@ app.get('/user/', function(req,res){
 });
 app.get('/', function(req, res){
 	if(check_https(req,res)){
+		
 		res.render('index', { title: 'Express' });
 	}
 });
@@ -240,31 +246,37 @@ app.post('/s_category/',function(req,res){
 });
 app.post('/a_product/', function(req, res){
 	if(check_https(req,res)) {
-		pg.connect(constring, function(err, client, done){
-			if(err){
-				done();
-				res.send(501, 'Sorry, server is busy playing XBOX right now!');
-			}
-			else {			
-				
-				var qstring="INSERT INTO products (name, description, price, user_id, \
-				category_id, amnt, img) VALUES ($1,$2,$3,$4,$5,$6,$7)";
-				var fm = req.body.product_info;
-				var placeholder=[fm.name,fm.description,fm.price, req.session.user_id,
-				fm.category,fm.amount,fm.img_data||'images/logo.png'];
-				client.query(qstring, placeholder,function(err, result){
+		if(is_authed(req, res)){
+			pg.connect(constring, function(err, client, done){
+				if(err){
 					done();
-					if(err){
-						res.send(404, 'Sorry, insert is sleeping!');
-						//~ res.json({suc:false,record:[]});
-					}
-					else {
-						console.log('insert succeed');
-						res.json({suc:true,record:result.rows});
-					}
-				});	
-			}
-		});
+					res.send(501, 'Sorry, server is busy playing XBOX right now!');
+				}
+				else {			
+					
+					var qstring="INSERT INTO products (name, description, price, user_id, \
+					category_id, amnt, img) VALUES ($1,$2,$3,$4,$5,$6,$7)";
+					var fm = req.body.product_info;
+					var placeholder=[fm.name,fm.description,fm.price, req.session.user_id,
+					fm.category,fm.amount,fm.img_data||'images/logo.png'];
+					client.query(qstring, placeholder,function(err, result){
+						done();
+						if(err){
+							res.send(404, 'Sorry, insert is sleeping!');
+							//~ res.json({suc:false,record:[]});
+						}
+						else {
+							console.log('insert succeed');
+							res.json({suc:true,record:result.rows});
+						}
+					});	
+				}
+			});
+		}
+		else {
+			res.send(404, 'User not authed to add new product!');
+		}
+
 	}
 });
 app.post('/auth/', function(req, res){
@@ -344,7 +356,46 @@ app.post('/login/', function(req, res){
 	
 });
 
+app.post("/d_product/", function(req, res){
+	if(check_https(req,res)) {
+		if(is_authed(req, res)){
+			pg.connect(constring, function(err, client, done){
+				if(err){
+					done();
+					res.send(501, 'Sorry, server is busy playing XBOX right now!');
+				}
+				else {			
+					
+					var qstring="UPDATE products SET n_a = true WHERE user_id=$1 AND id=$2";
+					var placeholder=[req.cookies.user_id, req.body.product_id];
+					client.query(qstring, placeholder,function(err, result){
+						done();
+						if(err){
+							res.send(404, 'Sorry, deleting is sleeping!');
+							//~ res.json({suc:false,record:[]});
+						}
+						else {
+								console.log('delete succeed');
+								res.json({suc:true,record:result.rows});
+						}
+					});	
+				}
+			});
+		}
+		else {
+			res.send(404, 'User not authed to add new product!');
+		}
 
+	}
+});
+
+app.post("/s_product/", function(req, res){
+	
+	if( check_https(req, res) ){
+		console.log(req.body);
+		get_product(req, res, req.body);
+	}
+});
 
 // this part just for running server
 function start_server(){
