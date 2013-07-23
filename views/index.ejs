@@ -274,7 +274,14 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		</table>
 	</div>
 	
-	<div id="footer">	
+	<div id="footer">
+		<table style="position:absolute; bottom:10px; width:100%; height:30px;">
+			<tr >
+				<td style="text-align:center;color:rgba(100,100,100,1);	text-shadow:2px 0px rgba(250,250,250,1);">
+					Copyright @ SRSPharmacy.com
+				</td>
+			</tr>
+		</table>
 	</div>
 	
 	<div id="edit_tab">
@@ -467,6 +474,7 @@ function render_item(params){
 	// it only indicate there are several fields for one product.
 	var tmp_cat_lst=clone(cur_category_list);
 	var cat_lst = '<option class="category_item" category_id='+params.category_id+'>'+tmp_cat_lst[params.category_id]+'</option>';
+	var selected_id = params.category_id;
 	delete tmp_cat_lst[params.category_id];
 	
 	for(var i in tmp_cat_lst){
@@ -481,14 +489,14 @@ function render_item(params){
 					<div class="p_table">\
 						<table style="margin-top:0px;">\
 							<tr>\
-								<td>name</td><td><input type="text" class="p_name" maxlength="50" value='+params.id+'></td>\
+								<td>name</td><td><input type="text" class="p_name" maxlength="50" value='+params.name+'></td>\
 								<td rowspan=4 style="vertical-align:top;">description</td>\
 								<td rowspan=4>\
 									<textarea class="p_desc" rows=4  maxlength="200">'+params.description+'</textarea>\
 								</td>\
 							</tr>\
 							<tr>\
-								<td>category</td><td><select class="category">'+cat_lst+'</select></td>\
+								<td>category</td><td><select class="p_category" selected_id='+selected_id+'>'+cat_lst+'</select></td>\
 							</tr>\
 							<tr>\
 								<td>price</td><td><input type="text" class="p_price" maxlength="8" value='+params.price+'></td>\
@@ -523,6 +531,13 @@ function render_item(params){
 						});
 					}
 					$("#product_list_frame").html(p_list_str);
+					
+					// this is the category dropbox selection event handler
+					$('.p_category').change(function(){
+						$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
+					});
+					
+					// this is the product delete button click event handler
 					$(".del_product").click(function(){
 						var del_info = {
 							product_id:$(this).parent().attr('p_id')
@@ -535,10 +550,36 @@ function render_item(params){
 							}
 							else {
 								alert("User not authenticated.");
+								not_authed();
 							}
 						};
 						
 						auth_user(d_product);
+					});
+					
+					// this is the product update button click event handler
+					$(".edit_product").click(function(){
+						var updt_info = {
+							product_id:$(this).parent().attr('p_id'),
+							name:$(this).parent().find(".p_name").val(),
+							category:$(this).parent().find(".p_category").attr("selected_id"),
+							price:$(this).parent().find(".p_price").val(),
+							amount:$(this).parent().find(".p_amnt").val(),
+							description:$(this).parent().find(".p_desc").val()
+						};
+						
+						// this just a wraper function 
+						function u_product(data){
+							if(data.authed){
+								edit_product(updt_info, refresh_lst);
+							}
+							else {
+								alert("User not authenticated.");
+								not_authed();
+							}
+						};
+						
+						auth_user(u_product);
 					});
 										
 			};
@@ -565,7 +606,40 @@ function render_item(params){
 					error:err_cb||function(err){alert(err.responseText);}
 				});
 			};
-				
+
+			function edit_product(updt_info, suc_cb, err_cb){
+				// the del_info looks like
+				// Right now, you can not change picture :(
+				/*
+						{
+							product_id:
+							name:
+							category:
+							price:
+							amount:
+							description:
+						};
+				*/
+				$.ajax({
+					url:"/u_product/",
+					type:"POST",
+					data:updt_info,
+					datatype:"JSON",
+					success:function(data){
+						if(data.suc){
+							suc_cb();
+							alert('Product updated.');
+						}
+						else {
+							alert('You can not edit this product.');
+							suc_cb();
+						}					
+					},
+					error:err_cb||function(err){alert(err.responseText);}
+				});
+			};
+
+
 			// this part is for checking if a user logged in, and send back to client side
 			// to change client login area style(such as lock the login textbox and set logout button)
 			function set_user_login_info(){
@@ -661,8 +735,13 @@ function bld_qstr(){
 				
 				
 				get_category(fill_category);	
-				set_user_login_info();			
+				set_user_login_info();
 
+
+
+
+				bld_qstr();
+				refresh_lst();
 				// this is the end of init_load();	
 			};
 			init_load();
@@ -726,7 +805,10 @@ function bld_qstr(){
 				
 				var wh = $(window).height();
 				var hh = $("#header").height();
-				console.log(hw);
+				
+				
+				console.log(0.1*wh+"px");
+				$("#edit_tab").css("top",0.4*wh+"px");
 				var plfh = wh-2*hh;
 				$('#product_list_frame').height(plfh-50);
 				
@@ -834,7 +916,7 @@ function bld_qstr(){
 					}
 					else {
 						alert("User not authenticated.");
-						//not_authed();
+						not_authed();
 					}
 				};
 				

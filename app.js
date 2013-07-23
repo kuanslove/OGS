@@ -28,8 +28,9 @@ function set_env(){
 	app.use(express.methodOverride());
 	app.use(express.cookieParser('you can never crack this secret key, can you?'));
 	app.use(express.session());
-	app.use(app.router);
+	
 	app.use(express.static(path.join(__dirname, 'public')));
+	app.use(app.router);
 
 	// development only
 	if ('development' == app.get('env')) {
@@ -319,7 +320,7 @@ app.post('/login/', function(req, res){
 				else {
 					// the server accepts connect
 					var qstring="select * from users where n_a=false and email=$1 and pswd=md5($2)";
-					client.query(qstring, [req.body.email,req.body.passwd],function(err, result){
+					client.query(qstring, [req.body.email,req.body.email+req.body.passwd],function(err, result){
 						done();
 					// the server is good, but can not query.
 						if(err){
@@ -355,7 +356,6 @@ app.post('/login/', function(req, res){
 	}
 	
 });
-
 app.post("/d_product/", function(req, res){
 	if(check_https(req,res)) {
 		if(is_authed(req, res)){
@@ -388,13 +388,68 @@ app.post("/d_product/", function(req, res){
 
 	}
 });
-
 app.post("/s_product/", function(req, res){
 	
 	if( check_https(req, res) ){
 		console.log(req.body);
 		get_product(req, res, req.body);
 	}
+});
+
+app.post("/u_product/", function(req, res){
+	if(check_https(req,res)) {
+		if(is_authed(req, res)){
+			pg.connect(constring, function(err, client, done){
+				if(err){
+					done();
+					res.send(501, 'Sorry, server is busy playing XBOX right now!');
+				}
+				else {			
+					
+					var qstring="UPDATE products SET (name, description, price, \
+					category_id, amnt, date_rev) = ($1,$2,$3,$4,$5,now()) WHERE user_id=$6 AND id=$7";
+					var fm = req.body;
+					var placeholder=[fm.name,fm.description,fm.price,
+					fm.category,fm.amount,req.cookies.user_id, fm.product_id];
+					client.query(qstring, placeholder,function(err, result){
+						done();
+						if(err){
+							console.log(err);
+							res.send(404, 'Sorry, updating is sleeping!');
+							//~ res.json({suc:false,record:[]});
+						}
+						else {
+							if(result.rowCount>0){
+								console.log('Updating succeed');
+								res.json({suc:true,record:result.rows});
+							}
+							else {
+								console.log('No Updating');
+								res.json({suc:false,record:result.rows});
+							}
+						}
+					});	
+				}
+			});
+		}
+		else {
+			res.send(404, 'User not authed to update new product!');
+		}
+
+	}
+});
+
+//~ app.get('/images/:fn',function(req, res){
+	//~ console.log(req.query.fn);
+	//~ res.sendFile("./public/images/"+req.query.fn);
+//~ });
+
+//~ //The 404 Route (ALWAYS Keep this as the last route)
+app.get('*', function(req, res){
+  res.redirect("/");
+});
+app.post('*', function(req, res){
+  res.redirect("/");
 });
 
 // this part just for running server
