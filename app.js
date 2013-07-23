@@ -375,8 +375,14 @@ app.post("/d_product/", function(req, res){
 							//~ res.json({suc:false,record:[]});
 						}
 						else {
-								console.log('delete succeed');
+							if(result.rowCount>0){
+								console.log('Delete succeed');
 								res.json({suc:true,record:result.rows});
+							}
+							else {
+								console.log('No Deleting');
+								res.json({suc:false,record:result.rows});
+							}
 						}
 					});	
 				}
