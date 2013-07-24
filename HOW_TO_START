@@ -1,0 +1,29 @@
+1. extract according version node-v0.10.13-linux-XXX.tar.gz 
+
+way to identify which package to extract:
+Open a console and input     uname -a
+if there is a X86_64, then use node-v0.10.13-linux-X64.tar.gz,
+otherwise, node-v0.10.13-linux-X86.tar.gz
+
+2. rename that extracted folder into node
+
+3. add node binary path to environment
+
+way to add that:
+Open a console, go into node/bin folder and input:
+export PATH=$PATH:$(pwd)
+
+4. install postgres and create a user kuan with password 123
+
+5. run db.sql(located in my project folder) to build table
+
+6. using
+npm install 
+in my project root folder(which contain app.js) to install dependency lib
+
+7. using 
+node app.js 
+in my project root folder(which contain app.js) to start server.
+
+8. open browser enter: localhost:3000
+

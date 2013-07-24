@@ -55,6 +55,10 @@
 			position:relative;
 			width:160px;
 		}		
+		.p_category {
+			position:relative;
+			width:160px;
+		}	
 		#footer {
 			height:50px;
 			position:fixed;
@@ -85,6 +89,41 @@
 			box-shadow: 0 0 5px 1px black;
 			border-bottom-left-radius:15px;
 			border-top-left-radius:15px;
+		}
+		#admin_tab {
+			position:fixed;
+			top:150px;
+			left: 0px;
+			height:400px;
+			width:21px;
+			background-color:rgba(221,221,221,0.85);
+			box-shadow: 0 0 5px 1px black;
+			border-bottom-right-radius:15px;
+			border-top-right-radius:15px;
+			overflow:hidden;
+		}
+		#admin_tab.open {
+			position:fixed;
+			top:150px;
+			left: 0px;
+			height:400px;
+			width:601px;
+			background-color:rgba(221,221,221,0.85);
+			box-shadow: 0 0 5px 1px black;
+			border-bottom-right-radius:15px;
+			border-top-right-radius:15px;
+			overflow:hidden;
+		}
+		#switch_admin {
+			position:absolute;
+			width:20px;
+			height:400px;
+			background-color:rgba(200,200,200,1);
+			right:0px;
+			top:0px;
+			border-bottom-right-radius:15px;
+			border-top-right-radius:15px;
+			padding-left:5px;
 		}
 		#switch {
 			position:absolute;
@@ -143,9 +182,11 @@
 			background-color:rgba(220,220,220,0.3);
 			text-shadow:1px 0px rgba(250,250,250,1);
 			color:rgba(100,100,100,1); 
+			font:normal normal normal 13px/normal Arial;
 		}
 		button:hover {
 			background-color:rgba(220,220,220,0.6);
+			font:normal normal normal 13px/normal Arial;
 		}
 		#preview_frame {
 			position:absolute;
@@ -177,7 +218,15 @@
 			color:rgba(100,100,100,1);
 			text-shadow:2px 0px rgba(250,250,250,1);
 			border-bottom:2px solid rgba(230,230,230,0.8);
-			padding-top:5px; 
+			padding-top:15px; 
+			margin:0px;
+			height:120px;
+		}
+		#my_product_list_frame li {
+			color:rgba(100,100,100,1);
+			text-shadow:2px 0px rgba(250,250,250,1);
+			border-bottom:2px solid rgba(230,230,230,0.8);
+			padding-top:15px; 
 			margin:0px;
 			height:120px;
 		}
@@ -192,19 +241,26 @@
 			width:110px; 
 			height:110px;
 		}
+		#my_product_list_frame .p_logo {
+			border:1px solid gray;
+			width:110px; 
+			height:110px;
+		}
 		#product_list_frame .product_item .p_table {
 			position:absolute;
 			top:0px;
 			left:150px;
+			font:normal normal normal 15px/normal Arial;
 		}
 		#product_info table tr td {
 			color:rgba(100,100,100,1);
 			text-shadow:2px 0px rgba(250,250,250,1);
+			font:normal normal normal 13px/normal Arial;
 		}
 		.product_item .edit_product {
 			position: absolute;
 			width:80px;
-			height:110px;
+			height:100px;
 			left:770px;
 			top:0px;
 			color:gray;
@@ -216,7 +272,7 @@
 		.product_item .del_product {
 			position: absolute;
 			width:80px;
-			height:110px;
+			height:100px;
 			left:680px;
 			top:0px;
 			color:gray;
@@ -229,6 +285,13 @@
 		a:visited {text-decoration:none;}
 		a:hover {text-decoration:underline;}
 		a:active {text-decoration:none;}
+		
+		#admin_tab td {
+			border:0px solid pink;
+			color:rgba(100,100,100,1);
+			text-shadow:2px 0px rgba(250,250,250,1);
+			font:normal normal normal 13px/normal Arial;
+		}
 	</style>
 </head>
 
@@ -264,9 +327,8 @@ If no keywrd specified, list all products in that category.">Search Item</button
 	<div id="content">
 		<ul id="product_list_frame" style="position:absolute; width:90%;height:600px;top:70px; 
 		left:40px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto; ">
-
 		</ul>
-		<table style="position:absolute; bottom:70px; width:100%;">
+		<table style="position:absolute; bottom:70px; width:100%;font:normal normal normal 13px/normal Arial;">
 			<tr >
 				<td style="text-align:center;color:rgba(100,100,100,1);	text-shadow:2px 0px rgba(250,250,250,1);">
 					GO TO PAGE:
@@ -282,7 +344,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		<table style="position:absolute; bottom:10px; width:100%; height:30px;">
 			<tr >
 				<td style="text-align:center;color:rgba(100,100,100,1);	text-shadow:2px 0px rgba(250,250,250,1);">
-					Copyright © 2013  <a href="mainto:kxing@srspharmacy.com" 
+					Copyright © 2013  <a href="mailto:kxing@srspharmacy.com" 
 					style="color:rgba(100,100,100,1);text-shadow:2px 0px rgba(250,250,250,1);">
 					KUAN
 					</a>
@@ -324,6 +386,31 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		 </button>
 	</div>
 	
+	
+<!--
+	admin_tab for now is for showing the user stuff rather than administration
+-->
+	<div id="admin_tab">
+		<button id="search_my" style="width:200px; color:rgba(100,100,100,1);margin-top:10px;
+		margin-left:10px;text-shadow:2px 0px rgba(250,250,250,1);">
+		SHOW MY STUFF
+		</button>
+		<ul id="my_product_list_frame" style="position:absolute; width:560px;height:320px;top:35px; 
+		left:10px; list-style:none; padding:0px;margin:0px; overflow-y:auto; border:0px solid purple;">
+		</ul>
+		<table style="position:absolute; bottom:15px; width:100%;font:normal normal normal 13px/normal Arial;">
+			<tr >
+				<td style="text-align:center;color:rgba(100,100,100,1);	text-shadow:2px 0px rgba(250,250,250,1);">
+					GO TO PAGE:
+					<select id="my_page_num"  style="width:50px;" current_offst=0>
+						<option offst=0>1</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		<div id="switch_admin"><br><br><br><br><br><br><br><br>►</div>
+	</div>
+	
 	<script>
 		
 
@@ -333,7 +420,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 			//global variable for sync ajax request
 			var cur_category_list={};
 			var cur_product_info={};
-			
+			var cur_my_product_info={};
 			
 			// store current query for changing page.
 			var current_query="";
@@ -341,7 +428,9 @@ If no keywrd specified, list all products in that category.">Search Item</button
 
 			// cur_r is used for building product list params
 			var cur_r={};
-
+			// this is dedicated for my stuff tab
+			var cur_my_r={};
+			
 			var img_data='';
 			var cur_user_id=undefined;
 			var authenticated=false;
@@ -388,6 +477,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 				return (txt.trim().length==0);
 			}
 
+// Deep copy a JSON object
 function clone(a) {
    return JSON.parse(JSON.stringify(a));
 }
@@ -447,11 +537,27 @@ function clone(a) {
 				});
 			};
 			
+			// init a request to get product data and trigger suc_cb
 			function get_product(req_info, suc_cb, err_cb ){
 				// return data contains total number of products, first page list
 				// 
 				$.ajax({
 					url:"/s_product/",
+					type:"POST",
+					datatype:"JSON",
+					data:req_info,// here we need to do more work.
+					success:suc_cb,
+					error:err_cb||function(){alert("Failed to get products info.");},
+					async:false
+				});
+			};
+			
+			// init a request to get MY product data and trigger suc_cb
+			function get_my_product(req_info, suc_cb, err_cb ){
+				// return data contains total number of products, first page list
+				// 
+				$.ajax({
+					url:"/s_my_product/",
 					type:"POST",
 					datatype:"JSON",
 					data:req_info,// here we need to do more work.
@@ -521,7 +627,71 @@ function render_item(params){
 		return template;
 };
 
+// Similar to render_item but dedicated for render mystuff list item
+function render_my_item(params){
+	var tmp_cat_lst=clone(cur_category_list);
+	var cat_lst = '<option class="category_item" category_id='+params.category_id+'>'+tmp_cat_lst[params.category_id]+'</option>';
+	var selected_id = params.category_id;
+	delete tmp_cat_lst[params.category_id];
+	
+	for(var i in tmp_cat_lst){
+		cat_lst+='<option class="category_item" category_id='+i+'>'+tmp_cat_lst[i]+'</option>';
+	}
+	
+	
+	var template ='\
+			<li>\
+				<table style="width:530px;">\
+					<tr>\
+						<td rowspan=4 style="width:100px;heigth:100px;">\
+							<div class="p_logo" style="width:100px; height:100px;background:url('+params.img+');"></div>\
+						</td>\
+						<td style="width:60px;">name</td>\
+						<td style="width:165px;">\
+							<input type="text" class="p_name" maxlength="50" value='+params.name+'>\
+						</td>\
+						<td style="width:165px;">description</td>\
+					</tr>\
+					<tr>\
+						<td>category</td>\
+						<td><select class="p_category" selected_id='+selected_id+'>'+cat_lst+'</select></td>\
+						<td rowspan=3>\
+							<textarea class="my_p_desc" rows=3  maxlength="200" \
+							style="width:160px; height:70px; resize:none;">'+params.description+'</textarea>\
+						</td>\
+					</tr>\
+					<tr>\
+						<td>price</td>\
+						<td><input type="text" class="p_price" maxlength="8" value='+params.price+'></td>\
+					</tr>\
+					<tr>\
+						<td>amount</td>\
+						<td><input type="text" class="p_amnt" maxlength="6" value='+params.amnt+'></td>\
+					</tr>\
+				</table>\
+			</li>';
+	return template;
+};
 
+			function fill_my_product(data){
+					// return product list(data) looks like:
+					/*	{
+							total_num:r_num,
+							page_list:result.rows
+						}
+					*/
+					cur_my_product_info = clone(data);
+					var p_list_str="No product found.";
+					if(data.page_list.length>0) {
+						p_list_str='';
+						$.each(data.page_list, function(index, val){
+							p_list_str+=render_my_item(val);
+						});
+					}
+					$("#my_product_list_frame").html(p_list_str);
+				};
+
+			// generate product list and attach it to <ul> 
 			function fill_product(data){
 					// return product list(data) looks like:
 					/*	{
@@ -684,10 +854,33 @@ function render_item(params){
 				$('#page_num').attr('current_offst',0);
 			};
 
+			function build_my_page_list(n){
+				// n is total number of results return
+				var total_pnum = 1;
+				if(n>0){
+					total_pnum = Math.floor(n/num_per_page)+((n%num_per_page==0)?0:1);
+				}
+				console.log(total_pnum);
+				var page_num_list='';
+				for (var i =0; i<total_pnum; i++){
+					page_num_list += "<option offst="+i+">"+(i+1)+"</option>";
+				}
+				$('#my_page_num').html(page_num_list);
+				$('#my_page_num').attr('current_offst',0);
+			};
+
 			function refresh_lst(){
 				get_product(cur_r, fill_product);
 				build_page_list(cur_product_info.total_num);
 			};
+			
+			// similar to common product refreshing but for my product
+			function refresh_my_lst(data){
+				get_my_product(cur_my_r, fill_my_product);
+				build_my_page_list(cur_my_product_info.total_num);
+			};
+			
+			
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function init_category_product(){
@@ -720,6 +913,26 @@ function bld_qstr(){
 	console.log(cur_r);
 };
 
+function bld_my_qstr(){
+	cur_my_r={};
+
+/*
+	var category_id = $("#category1").attr("selected_id");
+	
+	cur_my_r.category_id = category_id;
+	
+	var keywd;
+	if($("#keywd").val().trim().length>0){
+		keywd = $("#keywd").val().trim().split(' ');
+		cur_r.keywd = keywd;
+	}
+*/
+	cur_my_r.result_num = num_per_page;
+	cur_my_r.offst = 0;
+	//cur_r.offst = $('#page_num').attr('current_offst');
+	console.log(cur_r);
+};
+
 			function init_load(){
 			// this part is for adjusting the layout
 				var ww = $(window).width();
@@ -741,6 +954,9 @@ function bld_qstr(){
 				
 				var wh = $(window).height();
 				var hh = $("#header").height();
+				
+				$("#edit_tab").css("top",0.5*(wh-$("#edit_tab").height())+"px");
+				$("#admin_tab").css("top",0.5*(wh-$("#admin_tab").height())+"px");
 				var plfh = wh-2*hh;
 				$('#product_list_frame').height(plfh-50);
 				
@@ -795,7 +1011,22 @@ function bld_qstr(){
 				console.log("after build:",cur_r)
 				refresh_lst();
 			});
-
+			$("#search_my").click(function(){
+				// this just a wraper function 
+				function suc_cb(data){
+					if(data.authed){
+						bld_my_qstr();
+						console.log("after build:",cur_my_r)
+						refresh_my_lst();
+					}
+					else {
+						alert("User not authenticated.");
+						not_authed();
+					}
+				};
+				auth_user(suc_cb);
+			});
+			
 			$(window).resize(function(){
 				var ww = $(window).width();
 				var hw = $("#header").width();
@@ -812,16 +1043,15 @@ function bld_qstr(){
 				else {
 					$("#content").css("left",0);
 				}
-				
-				
+					
 				var wh = $(window).height();
 				var hh = $("#header").height();
-				
-				
-				console.log(0.1*wh+"px");
-				$("#edit_tab").css("top",0.4*wh+"px");
+
+				$("#edit_tab").css("top",0.5*(wh-$("#edit_tab").height())+"px");
+				$("#admin_tab").css("top",0.5*(wh-$("#admin_tab").height())+"px");
 				var plfh = wh-2*hh;
 				$('#product_list_frame').height(plfh-50);
+				
 				
 			});
 		
@@ -833,8 +1063,18 @@ function bld_qstr(){
 				else {
 					$("#switch").html("<br><br><br><br>►");
 				}
-				});			
-			
+				});
+							
+			$("#switch_admin").click(function(){
+				$('#admin_tab').toggleClass("open",500);
+				if($("#switch_admin").html()=="<br><br><br><br><br><br><br><br>►") {
+					$("#switch_admin").html("<br><br><br><br><br><br><br><br>◄");
+				}
+				else {
+					$("#switch_admin").html("<br><br><br><br><br><br><br><br>►");
+				}
+				});	
+
 			$("#preview").click(function(){
 				$("#img_file").click();
 				});
@@ -934,6 +1174,7 @@ function bld_qstr(){
 				var v = valid_form(product_form);
 				if(v.valid){
 					auth_user(suc_cb);
+					
 				}
 				else {
 					alert(v.tips);
@@ -947,6 +1188,14 @@ function bld_qstr(){
 				get_product(cur_r, fill_product);
 			});
 
+			$("#my_page_num").change(function(){
+				$(this).attr('current_offst',$(this).find("option:selected").attr("offst"));
+				cur_my_r.offst = $(this).attr('current_offst')*num_per_page;
+				console.log("after change my page#:",cur_my_r);
+				get_my_product(cur_my_r, fill_my_product);
+			});
+
+// CURIOUS WHY THERE IS NO EVENT HANDLER FOR DELETE AND UPDATE?
 // I register DELETE and UPDATE button click event in fill_product() function
 // because we need to register this call back to newly generated elements, otherwise
 // they will never work.
