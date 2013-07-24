@@ -17,8 +17,13 @@ export PATH=$PATH:$(pwd)
 
 5. run db.sql(located in my project folder) to build table
 
-6. using 
-node app.js in my project root folder(which contain app.js)
+6. using
+npm install 
+in my project root folder(which contain app.js) to install dependency lib
 
-7. open browser enter: localhost:3000
+7. using 
+node app.js 
+in my project root folder(which contain app.js) to start server.
+
+8. open browser enter: localhost:3000
 
