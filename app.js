@@ -39,6 +39,8 @@ function set_env(){
 };
 set_env(); 
 
+
+
 function check_https(req, res){
 	if(req.protocol=='https') {
 		return true;
@@ -129,8 +131,85 @@ function build_product_sql(r){
 	
 	return {sql:sql, params:params};
 };
+function build_my_product_sql(r){
+	
+	// the r passed in should be like
+	/*
+									{
+										result_num:6,
+										offst:2
+									}
+	the built string should look like:
+	* 
+	WITH p AS (
+			SELECT *
+			FROM products
+			WHERE 
+			user_id=XX
+			)
+	SELECT  *,
+			(select count(*) from p) as total
+	FROM p
+	ORDER BY date_rev 
+	LIMIT 5;
 
+	*/
+	var sql="WITH p AS ( SELECT * FROM products WHERE n_a=false ";
+	var holder_index=1;
+	var params = [];
+	
+
+	//~ console.log(undefined==r.keywd);
+	//~ if(r.keywd){
+		//~ var placeholder = [];
+		//~ for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
+			//~ placeholder.push('$'+(holder_index));
+			//~ params.push('%'+r.keywd[holder_index-1]+'%');
+		//~ }
+		//~ sql+="AND (name ILIKE ANY (array["+placeholder.join(",")+"]) ";
+//~ 
+		//~ var placeholder = [];
+		//~ for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
+			//~ placeholder.push('$'+(holder_index+r.keywd.length));
+			//~ params.push('%'+r.keywd[holder_index-1]+'%');
+		//~ }
+		//~ sql+="OR description ILIKE ANY (array["+placeholder.join(",")+"])) ";
+		//~ holder_index = 2*r.keywd.length+1;
+	//~ }
+
+	
+		
+	//~ if(r.category_id){
+		//~ params.push(r.category_id);
+		//~ sql+="AND category_id=$"+(holder_index++)+" ";
+	//~ }
+
+	if(r.user_id){
+		params.push(r.user_id);
+		sql+="AND user_id=$"+(holder_index++)+" ";
+	}
+	
+	
+	sql+=") ";
+	sql+="SELECT *, (SELECT count(*) FROM p) as total FROM p ";
+	
+	
+	sql+="ORDER BY date_rev DESC ";
+	
+	if(r.result_num){
+		params.push(r.result_num);
+		sql+="LIMIT $"+(holder_index++)+" ";
+	}
+	
+	if(r.offst){
+		params.push(r.offst);
+		sql+="OFFSET $"+(holder_index++)+" ";
+	}
+	
+	return {sql:sql, params:params};
+};
 function is_authed(req, res){
+	console.log("the auth user_id is:", req.cookies.user_id);
 	if(req.session.user_id && req.cookies.user_id){
 		if(req.cookies.user_id==req.session.user_id){
 			// user_id matched, authed!
@@ -146,9 +225,11 @@ function is_authed(req, res){
 		return false;
 	}
 };
-
 function get_product(req, res, r){
-	var qq = build_product_sql(r);
+	// we move this function outside, so we can use this for both common
+	// product request and my product request
+	//~ var qq = build_my_product_sql(r);
+	var qq = r;
 	console.log(qq.sql);
 	pg.connect(constring, function(err, client, done){
 		if(err){
@@ -160,7 +241,7 @@ function get_product(req, res, r){
 			client.query(qstring, qq.params, function(err, result){
 				done();
 				if(err){
-					res.send(404, 'Sorry, insert is sleeping!');
+					res.send(404, 'Sorry, query is sleeping!');
 				}
 				else {
 					var r_num=0;
@@ -180,8 +261,47 @@ function get_product(req, res, r){
 		}
 	});		
 };
+function clone(a) {
+   return JSON.parse(JSON.stringify(a));
+}
 
 
+
+
+// never use this, replaced by get_product()
+function get_product_not_used(req, res, r){
+	var qq = build_product_sql(r);
+	console.log(qq.sql);
+	pg.connect(constring, function(err, client, done){
+		if(err){
+				done();
+				res.send(501, 'Sorry, server is busy playing XBOX right now!');
+		}
+		else {
+			var qstring=qq.sql;
+			client.query(qstring, qq.params, function(err, result){
+				done();
+				if(err){
+					res.send(404, 'Sorry, query is sleeping!');
+				}
+				else {
+					var r_num=0;
+					if(result.rowCount==0){
+						r_num=0;
+					}
+					else {
+						r_num=result.rows[0].total;
+					}
+					res.json(
+						{
+							total_num:r_num,
+							page_list:result.rows
+						});
+				}
+			});
+		}
+	});		
+};
 // this handler is just for test the query
 app.get("/test/", function(req, res){
 	console.log("https://"+req.get('host')+req.url);
@@ -195,6 +315,8 @@ app.get("/test/", function(req, res){
 		);
 		
 });
+
+
 
 
 app.get('/user/', function(req,res){
@@ -394,11 +516,29 @@ app.post("/d_product/", function(req, res){
 
 	}
 });
+
+app.post("/s_my_product/", function(req, res){
+	if( check_https(req, res) ){
+		var r = clone(req.body);
+		r['user_id']=req.cookies.user_id;
+		console.log(req.cookies.user_id);
+		var qq = build_my_product_sql(r);
+		console.log("qq is:",qq);
+		if( is_authed(req, res) ){
+			get_product(req, res, qq);
+		}
+		else {
+			res.send(404, "User not authed to get product list.")
+		}
+	}
+});
+
 app.post("/s_product/", function(req, res){
 	
 	if( check_https(req, res) ){
+		var qq = build_product_sql(req.body);
 		console.log(req.body);
-		get_product(req, res, req.body);
+		get_product(req, res, qq);
 	}
 });
 
