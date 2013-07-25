@@ -187,7 +187,6 @@
 		button:hover {
 			background-color:rgba(220,220,220,0.6);
 			font:normal normal normal 13px/normal Arial;
-			color:black;
 		}
 		#preview_frame {
 			position:absolute;
@@ -269,7 +268,6 @@
 		}
 		.product_item .edit_product:hover {
 			background-color:rgba(10,220,10,0.6);
-			color:black;
 		}
 		.product_item .del_product {
 			position: absolute;
@@ -282,7 +280,6 @@
 		}
 		.product_item .del_product:hover {
 			background-color:rgba(220,10,10,0.6);
-			color:black;
 		}
 		a:link {text-decoration:none;}
 		a:visited {text-decoration:none;}
@@ -320,10 +317,12 @@
 			</button>
 		</div>
 		<div id="search_area">
-			<select id="category1" class="category" title="Search in"></select>
+			<select id="category1" selected_id=0 class="category" title="Search in">
+				<option category_id=0>revise category</option>
+				<option category_id=1>revise user</option>
+			</select>
 			<input type="text" style="width:200px;" id="keywd" title="Search for">
-			<button id="search" title="Search product in that category.
-If no keywrd specified, list all products in that category.">Search Item</button>
+			<button id="search" title="Search for specific item.">Search Item</button>
 		</div>
 	</div>
 	
@@ -355,7 +354,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 			</tr>
 		</table>
 	</div>
-	
+
 	<div id="edit_tab">
 		<div id="switch"><br><br><br><br>◄</div>
 		<div id="preview_frame">
@@ -388,36 +387,6 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		 height:65px; left:510px; top:120px;">Add Item
 		 </button>
 	</div>
-	
-	
-<!--
-	admin_tab for now is for showing the user stuff rather than administration
--->
-	<div id="admin_tab">
-		<button id="search_my" style="width:200px; color:rgba(100,100,100,1);margin-top:10px;
-		margin-left:10px;text-shadow:2px 0px rgba(250,250,250,1);">
-		SHOW MY STUFF
-		</button>
-		<button id="chg_pswd" style="position:absolute; width:200px; color:rgba(100,100,100,1);top:10px;
-		left:300px;text-shadow:2px 0px rgba(250,250,250,1);">
-		CHANGE MY PASSWORD
-		</button>
-		<ul id="my_product_list_frame" style="position:absolute; width:560px;height:320px;top:35px; 
-		left:10px; list-style:none; padding:0px;margin:0px; overflow-y:auto; border:0px solid purple;">
-		</ul>
-		<table style="position:absolute; bottom:15px; width:100%;font:normal normal normal 13px/normal Arial;">
-			<tr >
-				<td style="text-align:center;color:rgba(100,100,100,1);	text-shadow:2px 0px rgba(250,250,250,1);">
-					GO TO PAGE:
-					<select id="my_page_num"  style="width:50px;" current_offst=0>
-						<option offst=0>1</option>
-					</select>
-				</td>
-			</tr>
-		</table>
-		<div id="switch_admin"><br><br><br><br><br><br><br><br>►</div>
-	</div>
-	
 	<script>
 		
 
@@ -426,8 +395,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 			
 			//global variable for sync ajax request
 			var cur_category_list={};
-			var cur_product_info={};
-			var cur_my_product_info={};
+			var cur_info={};
 			
 			// store current query for changing page.
 			var current_query="";
@@ -533,7 +501,7 @@ function clone(a) {
 			// data return from server is all category id and name
 			
 	//!!!!!!! THIS AJAX IS SYNC RATHER THAN ASYNC TO MAKE SURE WE GET THE CAT_INFO FIRST!!!!!!!!!//
-			function get_category(suc_cb, err_cb){
+			function get_category(r, suc_cb, err_cb){
 				$.ajax({
 					url:"/s_category/",
 					type:"POST",
@@ -544,290 +512,26 @@ function clone(a) {
 				});
 			};
 			
-			// init a request to get product data and trigger suc_cb
-			function get_product(req_info, suc_cb, err_cb ){
-				// return data contains total number of products, first page list
-				// 
-				$.ajax({
-					url:"/s_product/",
-					type:"POST",
-					datatype:"JSON",
-					data:req_info,// here we need to do more work.
-					success:suc_cb,
-					error:err_cb||function(){alert("Failed to get products info.");},
-					async:false
-				});
-			};
-			
-			// init a request to get MY product data and trigger suc_cb
-			function get_my_product(req_info, suc_cb, err_cb ){
-				// return data contains total number of products, first page list
-				// 
-				$.ajax({
-					url:"/s_my_product/",
-					type:"POST",
-					datatype:"JSON",
-					data:req_info,// here we need to do more work.
-					success:suc_cb,
-					error:err_cb||function(){alert("Failed to get products info.");},
-					async:false
-				});
-			};
-			
-			// this part is for query initial data to fill out category and 
-			// according product list within that category
 			function fill_category(data){
-				// here, the data is an array
-				cur_category_list = {};
-				var category_list='';
-				$.each(data, function(index, val){
-					cur_category_list[val.id] = val.name;
-					category_list+='<option class="category_item" category_id='+val.id+'>'+val.name+'</option>';
-				});
-				$('.category').html(category_list);
-				$('.category').attr('selected_id',data[0].id);
+				
 			};
-
-
-function render_item(params){
-	// the params is only one product item rather than product list, do not be confused by that "s"
-	// it only indicate there are several fields for one product.
-	var tmp_cat_lst=clone(cur_category_list);
-	var cat_lst = '<option class="category_item" category_id='+params.category_id+'>'+tmp_cat_lst[params.category_id]+'</option>';
-	var selected_id = params.category_id;
-	delete tmp_cat_lst[params.category_id];
-	
-	for(var i in tmp_cat_lst){
-		cat_lst+='<option class="category_item" category_id='+i+'>'+tmp_cat_lst[i]+'</option>';
-	}
-	
-	
-	var template ='\
-			<li>\
-				<div class="product_item" p_id='+params.id+' u_id='+params.user_id+'>\
-					<div class="p_logo" style="width:100px; height:100px;background:url('+params.img+');"></div>\
-					<div class="p_table">\
-						<table style="margin-top:0px;">\
-							<tr>\
-								<td>name</td><td><input type="text" class="p_name" maxlength="50" value='+params.name+'></td>\
-								<td rowspan=4 style="vertical-align:top;">description</td>\
-								<td rowspan=4>\
-									<textarea class="p_desc" rows=4  maxlength="200">'+params.description+'</textarea>\
-								</td>\
-							</tr>\
-							<tr>\
-								<td>category</td><td><select class="p_category" selected_id='+selected_id+'>'+cat_lst+'</select></td>\
-							</tr>\
-							<tr>\
-								<td>price</td><td><input type="text" class="p_price" maxlength="8" value='+params.price+'></td>\
-							</tr>\
-							<tr>\
-								<td>amount</td><td><input type="text" class="p_amnt" maxlength="6" value='+params.amnt+'></td>\
-							</tr>\
-						</table>\
-					</div>\
-					<button class="del_product">Delete Product</button>\
-					<button class="edit_product">Update Product</button>\
-				</div>\
-			</li>\
-			';
-		return template;
-};
-
-// Similar to render_item but dedicated for render mystuff list item
-function render_my_item(params){
-	var tmp_cat_lst=clone(cur_category_list);
-	var cat_lst = '<option class="category_item" category_id='+params.category_id+'>'+tmp_cat_lst[params.category_id]+'</option>';
-	var selected_id = params.category_id;
-	delete tmp_cat_lst[params.category_id];
-	
-	for(var i in tmp_cat_lst){
-		cat_lst+='<option class="category_item" category_id='+i+'>'+tmp_cat_lst[i]+'</option>';
-	}
-	
-	
-	var template ='\
-			<li>\
-				<table style="width:530px;">\
-					<tr>\
-						<td rowspan=4 style="width:100px;heigth:100px;">\
-							<div class="p_logo" style="width:100px; height:100px;background:url('+params.img+');"></div>\
-						</td>\
-						<td style="width:60px;">name</td>\
-						<td style="width:165px;">\
-							<input type="text" class="p_name" maxlength="50" value='+params.name+'>\
-						</td>\
-						<td style="width:165px;">description</td>\
-					</tr>\
-					<tr>\
-						<td>category</td>\
-						<td><select class="p_category" selected_id='+selected_id+'>'+cat_lst+'</select></td>\
-						<td rowspan=3>\
-							<textarea class="my_p_desc" rows=3  maxlength="200" \
-							style="width:160px; height:70px; resize:none;">'+params.description+'</textarea>\
-						</td>\
-					</tr>\
-					<tr>\
-						<td>price</td>\
-						<td><input type="text" class="p_price" maxlength="8" value='+params.price+'></td>\
-					</tr>\
-					<tr>\
-						<td>amount</td>\
-						<td><input type="text" class="p_amnt" maxlength="6" value='+params.amnt+'></td>\
-					</tr>\
-				</table>\
-			</li>';
-	return template;
-};
-
-			function fill_my_product(data){
-					// return product list(data) looks like:
-					/*	{
-							total_num:r_num,
-							page_list:result.rows
-						}
-					*/
-					cur_my_product_info = clone(data);
-					var p_list_str="No product found.";
-					if(data.page_list.length>0) {
-						p_list_str='';
-						$.each(data.page_list, function(index, val){
-							p_list_str+=render_my_item(val);
-						});
-					}
-					$("#my_product_list_frame").html(p_list_str);
-				};
-
-			// generate product list and attach it to <ul> 
-			function fill_product(data){
-					// return product list(data) looks like:
-					/*	{
-							total_num:r_num,
-							page_list:result.rows
-						}
-					*/
-					cur_product_info = clone(data);
-					var p_list_str="No product found.";
-					if(data.page_list.length>0) {
-						p_list_str='';
-						$.each(data.page_list, function(index, val){
-							p_list_str+=render_item(val);
-						});
-					}
-					$("#product_list_frame").html(p_list_str);
-					
-					// this is the category dropbox selection event handler
-					$('.p_category').change(function(){
-						$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
-					});
-					
-					// this is the product delete button click event handler
-					$(".del_product").click(function(){
-						var del_info = {
-							product_id:$(this).parent().attr('p_id')
-						};
 						
-						// this just a wraper function 
-						function d_product(data){
-							if(data.authed){
-								del_product(del_info, refresh_lst);
-							}
-							else {
-								alert("User not authenticated.");
-								not_authed();
-							}
-						};
-						
-						auth_user(d_product);
-					});
-					
-					// this is the product update button click event handler
-					$(".edit_product").click(function(){
-						var updt_info = {
-							product_id:$(this).parent().attr('p_id'),
-							name:$(this).parent().find(".p_name").val(),
-							category:$(this).parent().find(".p_category").attr("selected_id"),
-							price:$(this).parent().find(".p_price").val(),
-							amount:$(this).parent().find(".p_amnt").val(),
-							description:$(this).parent().find(".p_desc").val()
-						};
-						
-						// this just a wraper function 
-						function u_product(data){
-							if(data.authed){
-								edit_product(updt_info, refresh_lst);
-							}
-							else {
-								alert("User not authenticated.");
-								not_authed();
-							}
-						};
-						
-						auth_user(u_product);
-					});
-										
-			};
-
-			function del_product(del_info, suc_cb, err_cb){
-				// the del_info looks like
-				/*
-				{
-					user_id:
-					product_id:
-				}
-				*/
+			function get_user(r, suc_cb){
 				$.ajax({
-					url:"/d_product/",
+					url:"/s_user/",
 					type:"POST",
-					data:del_info,
-					datatype:"JSON",
-					success:function(data){
-						if(data.suc){
-							suc_cb();
-							alert('Product deleted.');
-						}
-						else {
-							alert('You can not delete this product.');
-							suc_cb();
-						}					
-					},
-					error:err_cb||function(err){alert(err.responseText);}
+					datatype:'JSON',
+					success: suc_cb,
+					error:err_cb||function(){alert('Failed to get user info.');},
+					async:false
 				});
 			};
-
-			function edit_product(updt_info, suc_cb, err_cb){
-				// the del_info looks like
-				// Right now, you can not change picture :(
-				/*
-						{
-							product_id:
-							name:
-							category:
-							price:
-							amount:
-							description:
-						};
-				*/
-				$.ajax({
-					url:"/u_product/",
-					type:"POST",
-					data:updt_info,
-					datatype:"JSON",
-					success:function(data){
-						if(data.suc){
-							suc_cb();
-							alert('Product updated.');
-						}
-						else {
-							alert('You can not edit this product.');
-							suc_cb();
-						}					
-					},
-					error:err_cb||function(err){alert(err.responseText);}
-				});
+			
+			function fill_user(data){
+				
 			};
-
-
+			
+			
 			// this part is for checking if a user logged in, and send back to client side
 			// to change client login area style(such as lock the login textbox and set logout button)
 			function set_user_login_info(){
@@ -861,44 +565,13 @@ function render_my_item(params){
 				$('#page_num').attr('current_offst',0);
 			};
 
-			function build_my_page_list(n){
-				// n is total number of results return
-				var total_pnum = 1;
-				if(n>0){
-					total_pnum = Math.floor(n/num_per_page)+((n%num_per_page==0)?0:1);
-				}
-				console.log(total_pnum);
-				var page_num_list='';
-				for (var i =0; i<total_pnum; i++){
-					page_num_list += "<option offst="+i+">"+(i+1)+"</option>";
-				}
-				$('#my_page_num').html(page_num_list);
-				$('#my_page_num').attr('current_offst',0);
-			};
-
 			function refresh_lst(){
-				get_product(cur_r, fill_product);
-				build_page_list(cur_product_info.total_num);
-			};
-			
-			// similar to common product refreshing but for my product
-			function refresh_my_lst(data){
-				get_my_product(cur_my_r, fill_my_product);
-				build_my_page_list(cur_my_product_info.total_num);
+				get_info(cur_r, fill_info);
+				build_page_list(cur_info.total_num);
 			};
 			
 			
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function init_category_product(){
-	get_category( fill_category );
-	var init_req = {
-		category_id:cur_category_list[0].id,
-		result_num:num_per_page,
-		offst:0
-	};
-	get_product(init_req, fill_product);
-};
 
 
 // fill cur_r with current page params.
@@ -906,7 +579,7 @@ function bld_qstr(){
 	cur_r={};
 	var category_id = $("#category1").attr("selected_id");
 	
-	cur_r.category_id = category_id;
+	cur_r.task_id = category_id;
 	
 	var keywd;
 	if($("#keywd").val().trim().length>0){
@@ -916,26 +589,6 @@ function bld_qstr(){
 	
 	cur_r.result_num = num_per_page;
 	cur_r.offst = 0;
-	//cur_r.offst = $('#page_num').attr('current_offst');
-	console.log(cur_r);
-};
-
-function bld_my_qstr(){
-	cur_my_r={};
-
-/*
-	var category_id = $("#category1").attr("selected_id");
-	
-	cur_my_r.category_id = category_id;
-	
-	var keywd;
-	if($("#keywd").val().trim().length>0){
-		keywd = $("#keywd").val().trim().split(' ');
-		cur_r.keywd = keywd;
-	}
-*/
-	cur_my_r.result_num = num_per_page;
-	cur_my_r.offst = 0;
 	//cur_r.offst = $('#page_num').attr('current_offst');
 	console.log(cur_r);
 };
@@ -968,38 +621,17 @@ function bld_my_qstr(){
 				$('#product_list_frame').height(plfh-50);
 				
 				
-				get_category(fill_category);	
+				//get_category(fill_category);	
 				set_user_login_info();
 
 
 
 
-				bld_qstr();
-				refresh_lst();
+				//bld_qstr();
+				//refresh_lst();
 				// this is the end of init_load();	
 			};
 			init_load();
-
-		function block_right_click(t_f){
-			if(t_f){
-				if (document.addEventListener) {
-					document.addEventListener('contextmenu', function(e) {
-						alert("WELCOME TO ONLINE GROCERY STORE.");
-						e.preventDefault();
-					}, false);
-				} else {
-					document.attachEvent('oncontextmenu', function() {
-						alert("WELCOME TO ONLINE GROCERY STORE.");
-						window.event.returnValue = false;
-					});
-				}
-			}
-		};
-			
-			block_right_click(1);
-
-
-
 
 			$('#login').click(function(){
 				function suc_cb(data){
@@ -1032,28 +664,13 @@ function bld_my_qstr(){
 			$('.category').change(function(){
 				$(this).attr('selected_id',$(this).find("option:selected").attr("category_id"));
 			});
-				
+			
 			$("#search").click(function(){
 				bld_qstr();
 				console.log("after build:",cur_r)
 				refresh_lst();
 			});
-			$("#search_my").click(function(){
-				// this just a wraper function 
-				function suc_cb(data){
-					if(data.authed){
-						bld_my_qstr();
-						console.log("after build:",cur_my_r)
-						refresh_my_lst();
-					}
-					else {
-						alert("User not authenticated.");
-						not_authed();
-					}
-				};
-				auth_user(suc_cb);
-			});
-			
+		
 			$(window).resize(function(){
 				var ww = $(window).width();
 				var hw = $("#header").width();
@@ -1081,67 +698,7 @@ function bld_my_qstr(){
 				
 				
 			});
-		
-			$("#switch").click(function(){
-				$('#edit_tab').toggleClass("open",500);
-				if($("#switch").html()=="<br><br><br><br>►") {
-					$("#switch").html("<br><br><br><br>◄");
-				}
-				else {
-					$("#switch").html("<br><br><br><br>►");
-				}
-				});
-							
-			$("#switch_admin").click(function(){
-				$('#admin_tab').toggleClass("open",500);
-				if($("#switch_admin").html()=="<br><br><br><br><br><br><br><br>►") {
-					$("#switch_admin").html("<br><br><br><br><br><br><br><br>◄");
-				}
-				else {
-					$("#switch_admin").html("<br><br><br><br><br><br><br><br>►");
-				}
-				});	
-
-			$("#preview").click(function(){
-				$("#img_file").click();
-				});
-
-			$("#img_file").change(function(){
-				window.URL = window.URL || window.webkitURL;
-				
-				var f = document.getElementById('img_file').files[0];
-				if(f!=undefined){
-
-	// Give image data to an image object
-					var img = new Image();
-					img.src = window.URL.createObjectURL(f);
-	// Get the canvas drawing handler
-					var preview = document.getElementById('preview');
-					var ctx = preview.getContext('2d');
-
-					img.onload = function(){
-						var MAX_LEN=100;
-						
-						var w = this.width;
-						var h = this.height;
-					
-						if(w>h){
-							w = MAX_LEN;
-							h = w*this.height/this.width;
-						}
-						else
-						{
-							h = MAX_LEN;
-							w = h*this.width/this.height;
-						}
-						console.log(w+":"+h);
-						ctx.clearRect(0,0,MAX_LEN,MAX_LEN);
-						ctx.drawImage(img, 0,0,w,h);
-					};
-				}
-			//this is the end of img_file change.	
-			});	
-			
+	
 			$('#add_new').click(function(){
 				// client provides product info( self-info, category_id), server uses 
 				// session user_id, use date() as date_reg, date_rev
@@ -1215,47 +772,16 @@ function bld_my_qstr(){
 				get_product(cur_r, fill_product);
 			});
 
-			$("#my_page_num").change(function(){
-				$(this).attr('current_offst',$(this).find("option:selected").attr("offst"));
-				cur_my_r.offst = $(this).attr('current_offst')*num_per_page;
-				console.log("after change my page#:",cur_my_r);
-				get_my_product(cur_my_r, fill_my_product);
-			});
-
-			$("#chg_pswd").click(function(){
-				
-				function chg_pswd(data){
-					if(data.authed){
-						var passwd1=prompt("Input your new password.");
-						var passwd2=prompt("Re-Input your new password.");
-						if(passwd1.trim()==passwd2.trim()){
-							$.ajax({
-								url:"/u_pswd/",
-								type:"POST",
-								data:{new_pswd:passwd1},
-								datatype:"JSON",
-								success:function(d){
-									if(d.suc){
-										alert("Password changed!");
-									}
-								},
-								error:function(e){alert(e.responseText);}
-							});	
-
-						}
-						else {
-							alert("New pasword not matched in two inputs!");
-						}
-					}
-					else {
-						alert("User not authed!");
-					}
-				};
-				
-				auth_user(chg_pswd);
-			});
-
-
+			$("#switch").click(function(){
+				$('#edit_tab').toggleClass("open",500);
+				if($("#switch").html()=="<br><br><br><br>►") {
+					$("#switch").html("<br><br><br><br>◄");
+				}
+				else {
+					$("#switch").html("<br><br><br><br>►");
+				}
+				});
+			
 // CURIOUS WHY THERE IS NO EVENT HANDLER FOR DELETE AND UPDATE?
 // I register DELETE and UPDATE button click event in fill_product() function
 // because we need to register this call back to newly generated elements, otherwise
