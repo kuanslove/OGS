@@ -11,7 +11,7 @@ img_id integer,
 user_id integer not null,
 category_id integer not null,
 amnt integer not null default 0,
-price decimal(2,5) default 0.00,
+price decimal(7,2) default 0.00,
 img text default 'images/logo.jpg',
 date_reg timestamp not null default now(),
 date_rev timestamp not null default now(),
@@ -40,7 +40,7 @@ n_a boolean default false);
 --~ n_a boolean not null default false);
 
 
-INSERT INTO users (name,email,pswd) VALUES ('kxing','kxing@mtu.edu','123');
+INSERT INTO users (name,email,pswd) VALUES ('kxing','kxing@mtu.edu',md5('kxing@mtu.edu123'));
 INSERT INTO category (name) VALUES ('drinks');
 INSERT INTO category (name) VALUES ('food');
 INSERT INTO category (name) VALUES ('clothing');

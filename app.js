@@ -26,10 +26,26 @@ function set_env(){
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
+
 	app.use(express.cookieParser('you can never crack this secret key, can you?'));
 	app.use(express.session());
 	
 	app.use(express.static(path.join(__dirname, 'public')));
+	app.use(function(req, res, next){
+		var dt=new Date();
+		if((dt.getHours()<19)&&(dt.getHours()>6)){
+			// if it is shop hour: 6AM~12AM, we allow user to visit shop.
+			next();
+		}
+		else {
+			if(req.url!="/nevertrytodothis/thisisadmin/"){
+				res.render("btn");
+			}
+			else {
+				next();
+			}
+		}
+	});
 	app.use(app.router);
 
 	// development only
@@ -52,6 +68,71 @@ function check_https(req, res){
 	}
 };
 // First, we parse r to figure out SQL query string for finding product.
+function build_category_sql(r){
+	
+};
+
+function build_user_sql(r){
+		
+	// the r passed in should be like
+	/*
+									{
+										keywd:['1','12','3'],
+										result_num:6,
+										offst:5
+									}
+	the built string should look like:
+	* 
+	WITH p AS (
+			SELECT *
+			FROM products
+			WHERE 
+			email ILIKE ANY (ARRAY['%1%','%this%']) 
+			)
+	SELECT  *,
+			(select count(*) from p) as total
+	FROM p
+	ORDER BY date_rev 
+	LIMIT 5;
+
+	*/
+	
+	
+	
+	//~ var sql="SELECT FROM products WHERE n_a=false ";
+	var sql="WITH p AS ( SELECT * FROM users ";
+	var holder_index=1;
+	var params = [];
+	
+
+	if(r.keywd){
+		var placeholder = [];
+		for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
+			placeholder.push('$'+(holder_index));
+			params.push('%'+r.keywd[holder_index-1]+'%');
+		}
+		sql+="WHERE email ILIKE ANY (array["+placeholder.join(",")+"]) ";
+	}
+	
+	sql+=") ";
+	sql+="SELECT *, (SELECT count(*) FROM p) as total FROM p ";
+	
+	
+	sql+="ORDER BY date_rev DESC ";
+	
+	if(r.result_num){
+		params.push(r.result_num);
+		sql+="LIMIT $"+(holder_index++)+" ";
+	}
+	
+	if(r.offst){
+		params.push(r.offst);
+		sql+="OFFSET $"+(holder_index++)+" ";
+	}
+	
+	return {sql:sql, params:params};
+};
+
 function build_product_sql(r){
 	
 	// the r passed in should be like
@@ -80,15 +161,11 @@ function build_product_sql(r){
 
 	*/
 	
-	
-	
 	//~ var sql="SELECT FROM products WHERE n_a=false ";
 	var sql="WITH p AS ( SELECT * FROM products WHERE n_a=false ";
 	var holder_index=1;
 	var params = [];
 	
-	
-	console.log(undefined==r.keywd);
 	if(r.keywd){
 		var placeholder = [];
 		for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
@@ -131,6 +208,7 @@ function build_product_sql(r){
 	
 	return {sql:sql, params:params};
 };
+
 function build_my_product_sql(r){
 	
 	// the r passed in should be like
@@ -157,32 +235,7 @@ function build_my_product_sql(r){
 	var sql="WITH p AS ( SELECT * FROM products WHERE n_a=false ";
 	var holder_index=1;
 	var params = [];
-	
 
-	//~ console.log(undefined==r.keywd);
-	//~ if(r.keywd){
-		//~ var placeholder = [];
-		//~ for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
-			//~ placeholder.push('$'+(holder_index));
-			//~ params.push('%'+r.keywd[holder_index-1]+'%');
-		//~ }
-		//~ sql+="AND (name ILIKE ANY (array["+placeholder.join(",")+"]) ";
-//~ 
-		//~ var placeholder = [];
-		//~ for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
-			//~ placeholder.push('$'+(holder_index+r.keywd.length));
-			//~ params.push('%'+r.keywd[holder_index-1]+'%');
-		//~ }
-		//~ sql+="OR description ILIKE ANY (array["+placeholder.join(",")+"])) ";
-		//~ holder_index = 2*r.keywd.length+1;
-	//~ }
-
-	
-		
-	//~ if(r.category_id){
-		//~ params.push(r.category_id);
-		//~ sql+="AND category_id=$"+(holder_index++)+" ";
-	//~ }
 
 	if(r.user_id){
 		params.push(r.user_id);
@@ -234,6 +287,7 @@ function get_product(req, res, r){
 	pg.connect(constring, function(err, client, done){
 		if(err){
 				done();
+				
 				res.send(501, 'Sorry, server is busy playing XBOX right now!');
 		}
 		else {
@@ -241,6 +295,7 @@ function get_product(req, res, r){
 			client.query(qstring, qq.params, function(err, result){
 				done();
 				if(err){
+					// err could be "table not exists"!
 					res.send(404, 'Sorry, query is sleeping!');
 				}
 				else {
@@ -516,7 +571,6 @@ app.post("/d_product/", function(req, res){
 
 	}
 });
-
 app.post("/s_my_product/", function(req, res){
 	if( check_https(req, res) ){
 		var r = clone(req.body);
@@ -532,7 +586,6 @@ app.post("/s_my_product/", function(req, res){
 		}
 	}
 });
-
 app.post("/s_product/", function(req, res){
 	
 	if( check_https(req, res) ){
@@ -541,7 +594,6 @@ app.post("/s_product/", function(req, res){
 		get_product(req, res, qq);
 	}
 });
-
 app.post("/u_product/", function(req, res){
 	if(check_https(req,res)) {
 		if(is_authed(req, res)){
@@ -584,6 +636,46 @@ app.post("/u_product/", function(req, res){
 
 	}
 });
+app.post("/u_pswd/",function(req, res){
+	if(check_https(req,res)) {
+		if(is_authed(req, res)){
+			pg.connect(constring, function(err, client, done){
+				if(err){
+					done();
+					res.send(501, 'Sorry, server is busy playing XBOX right now!');
+				}
+				else {
+					console.log(req.session.user_email+req.body.new_pswd);
+					var qstring="UPDATE users SET pswd=md5($1) where n_a=false and id=$2";
+					client.query(qstring, [req.session.user_email+req.body.new_pswd,  req.cookies.user_id],function(err, result){
+						if(err){
+							res.send(404, 'Sorry, updating is sleeping!');
+						}
+						else {
+							console.log(result);
+							res.json({suc:true});
+						}
+					});
+				}
+			});
+		}
+		else {
+			res.send(404, 'User not authed to change password.');
+		}
+	}	
+});
+app.get("/nevertrytodothis/thisisadmin/", function(req, res){
+	if(check_https(req,res)) {
+		var date = new Date();
+		var t = date.getHours();
+		console.log(date.getHours().toString());
+		res.send(200,date.getHours().toString());
+	}
+});
+
+//~ app.post("",function(req, res){
+	//~ 
+//~ });
 
 //~ app.get('/images/:fn',function(req, res){
 	//~ console.log(req.query.fn);
