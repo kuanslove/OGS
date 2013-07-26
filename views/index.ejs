@@ -12,7 +12,7 @@
 			margin:0px;
 			padding:0px;
 			background-color:steelblue;
-			background:url("images/cloud.jpg");
+			background:url("/images/cloud.jpg");
 		}
 
 
@@ -1013,20 +1013,24 @@ function bld_my_qstr(){
 				};
 			// this function is for login button click
 			// it could be login or logout
-				function user_login(email, passwd, success_cb, error_cb){
+				function user_login(log_info, success_cb, error_cb){
 					$.ajax({
 						url:"/login/",
 						type:"POST",
 						datatype:'JSON',
 						data:{
-							'email':email,
-							'passwd':passwd
+							'email':log_info.email,
+							'passwd':log_info.passwd
 						},
 						success: success_cb,
 						error: error_cb||function(err){alert(err.responseText);}
 					});
 				};
-				user_login( $('#email').val().trim(), $('#passwd').val().trim(), suc_cb);
+				var log_info = {
+					email:$('#email').val().trim(),
+					passwd:$('#passwd').val().trim()
+				};
+				user_login(log_info, suc_cb);
 			});	
 
 			$('.category').change(function(){
