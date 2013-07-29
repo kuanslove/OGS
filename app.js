@@ -28,23 +28,7 @@ function set_env(){
 	app.use(express.methodOverride());
 	app.use(express.cookieParser('you can never crack this secret key, can you?'));
 	app.use(express.session());
-
 	app.use(express.static(path.join(__dirname, 'public')));
-	//~ app.use(function(req, res, next){
-		//~ var dt=new Date();
-		//~ if((dt.getHours()<24)&&(dt.getHours()>6)){
-			//~ // if it is shop hour: 6AM~12AM, we allow user to visit shop.
-			//~ next();
-		//~ }
-		//~ else {
-			//~ if(req.url!="/never/"){
-				//~ res.render("btn");
-			//~ }
-			//~ else {
-				//~ next();
-			//~ }
-		//~ }
-	//~ });
 	app.use(app.router);
 
 	// development only
@@ -70,9 +54,61 @@ function check_https(req, res){
 
 
 function build_category_sql(r){
-	
-};
+	// the r passed in should be like
+	/*
+									{
+										keywd:['1','12','3'],
+										result_num:6,
+										offst:5
+									}
+	the built string should look like:
+	* 
+	WITH p AS (
+			SELECT *
+			FROM products
+			WHERE 
+			name ILIKE ANY (ARRAY['%1%','%this%']) 
+			)
+	SELECT  *,
+			(select count(*) from p) as total
+	FROM p
+	LIMIT 5;
 
+	*/
+	
+
+	var sql="WITH p AS ( SELECT * FROM category  ";
+	var holder_index=1;
+	var params = [];
+	
+
+	if(r.keywd){
+		var placeholder = [];
+		for(holder_index=1; holder_index<=r.keywd.length; holder_index++){
+			placeholder.push('$'+(holder_index));
+			params.push('%'+r.keywd[holder_index-1]+'%');
+		}
+		sql+="WHERE name ILIKE ANY (array["+placeholder.join(",")+"]) ";
+	}
+	
+	sql+=") ";
+	sql+="SELECT *, (SELECT count(*) FROM p) as total FROM p ";
+	
+	
+	//sql+="ORDER BY date_rev DESC ";
+	
+	if(r.result_num){
+		params.push(r.result_num);
+		sql+="LIMIT $"+(holder_index++)+" ";
+	}
+	
+	if(r.offst){
+		params.push(r.offst);
+		sql+="OFFSET $"+(holder_index++)+" ";
+	}
+	
+	return {sql:sql, params:params};
+};
 function build_user_sql(r){
 		
 	// the r passed in should be like
@@ -141,12 +177,6 @@ function build_user_sql(r){
 	
 	return {sql:sql, params:params};
 };
-
-
-
-
-
-
 function build_product_sql(r){
 	
 	// the r passed in should be like
@@ -413,7 +443,19 @@ app.get("/test/", function(req, res){
 		
 });
 
-
+app.post('/s_category/admin/', function(req,res){
+	if(check_https(req,res)) {
+		var r = clone(req.body);
+		var qq = build_category_sql(r);
+		
+		if( is_authed(req, res) ){
+			get_product(req, res, qq);
+		}
+		else {
+			res.send(404, "User not authed to get category list.");
+		}
+	}
+});
 
 app.post('/s_user/admin/', function(req,res){
 	if(check_https(req,res)) {
@@ -514,7 +556,6 @@ app.post('/auth/', function(req, res){
 		}
 	}
 });
-
 app.post('/auth/admin/', function(req, res){
 	if( check_https(req, res) ){
 		// is_authed check if req.session.user_id exists 
@@ -535,7 +576,6 @@ app.post('/auth/admin/', function(req, res){
 		}
 	}
 });
-
 app.post('/login/', function(req, res){
 	if( check_https(req, res) ){
 		if( is_authed(req, res) ){
@@ -790,7 +830,6 @@ app.post("/u_pswd/",function(req, res){
 		}
 	}	
 });
-
 app.post("/a_user/", function(req,res){
 	if(check_https(req,res)) {
 		if(is_authed(req, res)){
@@ -864,8 +903,61 @@ app.post("/u_user/", function(req, res){
 		}
 	}
 });
-
-
+app.post("/u_category/",function(req, res){
+	if(check_https(req,res)) {
+		if(is_authed(req, res)){
+			pg.connect(constring, function(err, client, done){
+				if(err){
+					done();
+					res.send(501, 'Sorry, server is busy playing XBOX right now!');
+				}
+				else {
+					var qstring="UPDATE category SET name=$1 WHERE id=$2";
+					client.query(qstring, [req.body.name,req.body.category_id],function(err, result){
+						if(err){
+							console.log(err);
+							res.send(404, 'Sorry, updating is sleeping!');
+						}
+						else {
+							console.log("HAHA:",result);
+							res.json({suc:true});
+						}
+					});
+				}
+			});
+		}
+		else {
+			res.send(404, 'User not authed to update.');
+		}
+	}
+});
+app.post("/a_category/",function(req, res){
+	if(check_https(req,res)) {
+		if(is_authed(req, res)){
+			pg.connect(constring, function(err, client, done){
+				if(err){
+					done();
+					res.send(501, 'Sorry, server is busy playing XBOX right now!');
+				}
+				else {
+					var qstring="INSERT INTO category (name) VALUES ($1)";
+					client.query(qstring, [req.body.name],function(err, result){
+						if(err){
+							console.log(err);
+							res.send(404, 'Sorry, Adding is sleeping!');
+						}
+						else {
+							res.json({suc:true});
+						}
+					});
+				}
+			});
+		}
+		else {
+			res.send(404, 'User not authed to add.');
+		}
+	}
+});
 app.get("/never/", function(req, res){
 	if(check_https(req,res)) {
 		req.session.user_id=undefined;

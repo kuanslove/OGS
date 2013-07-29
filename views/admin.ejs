@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title>untitled</title>
+	<title>Administration</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
@@ -212,6 +212,15 @@
 			left:29px;
 			width:370px;
 		}
+		#category_info {
+			position:absolute;
+			top:130px;
+			left:29px;
+			width:500px;
+			height:10px;
+			border-top:0px solid rgba(250,250,250,0.9);
+			
+		}
 		td {
 			border:0px solid gray;
 		}
@@ -249,7 +258,12 @@
 			text-shadow:2px 0px rgba(250,250,250,1);
 			font:normal normal normal 13px/normal Arial;
 		}
-		.product_item .edit_product {
+		#category_info table tr td {
+			color:rgba(100,100,100,1);
+			text-shadow:2px 0px rgba(250,250,250,1);
+			font:normal normal normal 13px/normal Arial;
+		}
+		.product_item .edit_product, .product_item .edit_category{
 			position: absolute;
 			width:80px;
 			height:60px;
@@ -258,7 +272,7 @@
 			color:gray;
 			background-color:rgba(10,220,10,0.3);
 		}
-		.product_item .edit_product:hover {
+		.product_item .edit_product:hover ,  .product_item .edit_category:hover{
 			background-color:rgba(10,220,10,0.6);
 			color:black;
 		}
@@ -305,10 +319,8 @@
 		</div>
 		<div id="search_area">
 			<select id="category1" selected_id=1 class="category" title="Search in">
-<!--
-				<option category_id=0>revise category</option>
--->
 				<option category_id=1>revise user</option>
+				<option category_id=0>revise category</option>	
 			</select>
 			<input type="text" style="width:200px;" id="keywd" title="Search for">
 			<button id="search" title="Search for specific item.">Search Item</button>
@@ -317,7 +329,7 @@
 	
 	<div id="content">
 		<ul id="product_list_frame" style="position:absolute; width:90%;height:600px;top:70px; 
-		left:60px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto; ">
+		left:60px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto; ">	
 		</ul>
 		<table style="position:absolute; bottom:70px; width:100%;font:normal normal normal 13px/normal Arial;">
 			<tr >
@@ -346,11 +358,14 @@
 
 	<div id="edit_tab">
 		<div id="switch"><br><br><br><br>◄</div>
+<!--
+		this is actually not product but user, I just use same name
+-->
 		<div id="product_info">
 			<div style="width:900px;background:rgba(221,221,221,0.6); border:0px solid purple;">
 				<table style="width:900px; height:60px; border-bottom: 0px solid white;">
 					<tr>
-						<td style="width:80px;">user name:</td>
+						<td style="width:100px;">user name:</td>
 						<td style="width:200px;">
 							<input type="text" value="" title="USER NAME" id="reg_name" 
 							style="margin-top:0px; margin-bottom:0px;">
@@ -385,7 +400,19 @@
 					</tr>
 				</table>
 			</div>
-			<button id="add_user">Add User</button>
+			<button id="add_user" style="width:100px;">Add User</button>
+		</div>
+		<div id="category_info">
+			<table>
+				<tr>
+					<td style="width:100px;">category name:</td>
+					<td>
+						<input type="text" value="" title="CATEGORY NAME" id="reg_cat_name" 
+							style="margin-top:0px; margin-bottom:0px;">
+					</td>
+				</tr>
+			</table>
+			<button id="add_category" style="width:100px;">Add Category</button>
 		</div>
 	</div>
 	<script>
@@ -516,18 +543,105 @@ function bld_qstr(){
 					url:"/s_category/admin/",
 					type:"POST",
 					datatype:'JSON',
+					data:r,
 					success: suc_cb,
 					error:err_cb||function(){alert('Failed to get category info.');},
 					async:false
 				});
 			};
 
-function render_category_item(data){
-	
+function render_category_item(params){
+	var template = '\
+		<li>\
+		<div class="product_item" u_id='+params.id+'>\
+			<div style="width:900px;background:rgba(221,221,221,0.6); border:0px solid purple;">\
+				<table style="width:900px; height:60px;">\
+					<tr>\
+						<td style="width:120px;">category name:</td>\
+						<td>\
+						<input type="text" value='+params.name+' title="CATEGORY NAME" class="reg_cat_name"\
+						 style="margin-top:0px; margin-bottom:0px;">\
+						</td>\
+					</tr>\
+				</table>\
+			</div>\
+			<button class="edit_category">Update Category</button>\
+		</div>\
+		</li>\
+	';
+	return template;
 };
 	
 			function fill_category(data){
+				// return user list(data) looks like:
+				/*	{
+						total_num:r_num,
+						page_list:result.rows
+					}
+				*/
+				cur_product_info = clone(data);
+				var p_list_str="No user found.";
+				if(data.page_list.length>0) {
+					p_list_str='';
+					$.each(data.page_list, function(index, val){
+						p_list_str+=render_category_item(val);
+					});
+				}
+				$("#product_list_frame").html(p_list_str);
+
 				
+				// this is the product update button click event handler
+				$(".edit_category").click(function(){
+					
+					var updt_info = {
+						category_id:$(this).parent().attr('u_id'),
+						name:$(this).parent().find(".reg_cat_name").val().trim()
+					};
+					alert(updt_info);
+					function edit_category(updt_info){
+						// the updt_info looks like
+						// Right now, you can not change picture :(
+						/*
+								{
+									category_id
+									name
+								};
+						*/
+						$.ajax({
+							url:"/u_category/",
+							type:"POST",
+							data:updt_info,
+							datatype:"JSON",
+							success:function(data){
+								if(data.suc){
+									alert('User updated.');
+								}
+								else {
+									alert('You can not edit this category.');
+								}					
+							},
+							error:function(err){alert(err.responseText);}
+						});
+					};
+
+					// this just a wraper function 
+					function u_category(data){
+						if(data.authed){
+							edit_category(updt_info);
+						}
+						else {
+							alert("User not authenticated.");
+							not_authed();
+						}
+					};
+				if( isEmpty(updt_info.name)){
+					alert("Make sure you fill name.");
+				}
+				else {
+					auth_user(u_category);
+				}
+					
+				});
 			};
 						
 			function get_user(r, suc_cb, err_cb){
@@ -718,7 +832,7 @@ function render_user_item(params){
 					// this just a wraper function 
 					function u_product(data){
 						if(data.authed){
-							edit_user(updt_info, refresh_lst);
+							edit_user(updt_info);
 						}
 						else {
 							alert("User not authenticated.");
@@ -994,6 +1108,54 @@ function render_user_item(params){
 				}
 				
 			});
+
+
+			$("#add_category").click(function(){
+
+				var updt_info={
+					name:$("#reg_cat_name").val().trim()
+				};
+				
+				function add_category(updt_info){
+					$.ajax({
+						url:"/a_category/",
+						type:"POST",
+						data:updt_info,
+						datatype:"JSON",
+						success:function(data){
+							if(data.suc){
+								alert('Category added.');
+							}
+							else {
+								alert('You can not add this category.');
+							}					
+						},
+						error:function(err){alert(err.responseText);}
+					});
+				};
+
+				// this just a wraper function 
+				function a_category(data){
+					if(data.authed){
+						add_category(updt_info);
+					}
+					else {
+						alert("User not authenticated.");
+						not_authed();
+					}
+				};
+				
+				if( isEmpty(updt_info.name)){
+					alert("Make sure you fill name.");
+				}
+				else {
+					auth_user(a_category);
+				}
+			});
+
+
+
+
 // I register UPDATE button click event in fill_product() function
 // because we need to register this call back to newly generated elements, otherwise
 // they will never work.
