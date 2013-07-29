@@ -29,6 +29,18 @@ function set_env(){
 	app.use(express.cookieParser('you can never crack this secret key, can you?'));
 	app.use(express.session());
 	app.use(express.static(path.join(__dirname, 'public')));
+	
+	//~ app.use(function(req, res, next){
+		//~ var dt=new Date();
+		//~ if((dt.getHours()<22)&&(dt.getHours()>16)){
+		  //~ // if it is shop hour: 6AM~12AM, we allow user to visit shop.
+		  //~ next();
+		//~ }
+		//~ else {
+		  //~ res.render("btn");
+		  //~ }
+	//~ }); 
+
 	app.use(app.router);
 
 	// development only

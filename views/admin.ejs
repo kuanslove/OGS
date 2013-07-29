@@ -427,7 +427,7 @@
 			
 			// store current query for changing page.
 			var current_query="";
-			var num_per_page=2;
+			var num_per_page=8;
 
 			// cur_r is used for building product list params
 			var cur_r={};
@@ -473,6 +473,23 @@
 			function isEmpty(txt){
 				return (txt.trim().length==0);
 			}
+
+			function block_right_click(t_f){
+				if(t_f){
+					if (document.addEventListener) {
+						document.addEventListener('contextmenu', function(e) {
+							alert("WELCOME TO ONLINE GROCERY STORE.");
+							e.preventDefault();
+						}, false);
+					} else {
+						document.attachEvent('oncontextmenu', function() {
+							alert("WELCOME TO ONLINE GROCERY STORE.");
+							window.event.returnValue = false;
+						});
+					}
+				}
+			};
+			
 
 // Deep copy a JSON object
 function clone(a) {
@@ -885,7 +902,7 @@ function render_user_item(params){
 				build_page_list(cur_product_info.total_num);
 			};
 			
-			
+	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -921,7 +938,7 @@ function render_user_item(params){
 				set_user_login_info();
 
 
-
+block_right_click(1);
 
 				//bld_qstr();
 				//refresh_lst();
