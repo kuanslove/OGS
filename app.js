@@ -32,7 +32,7 @@ function set_env(){
 	
 	//~ app.use(function(req, res, next){
 		//~ var dt=new Date();
-		//~ if((dt.getHours()<22)&&(dt.getHours()>16)){
+		//~ if((dt.getHours()<11)&&(dt.getHours()>6)){
 		  //~ // if it is shop hour: 6AM~12AM, we allow user to visit shop.
 		  //~ next();
 		//~ }
