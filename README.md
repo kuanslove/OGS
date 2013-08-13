@@ -17,5 +17,9 @@ npm install
 npm install pg
 
 
+
+BTW, do not forget to install postgres 9.X, the Postgres 8.X has some problem with pg.
+
+
 Kuan
 kuanslove@gmail.com
