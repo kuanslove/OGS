@@ -13,7 +13,7 @@ way to add that:
 Open a console, go into node/bin folder and input:
 export PATH=$PATH:$(pwd)
 
-4. install postgres and create a user kuan with password 123
+4. install postgres(>=9.0) and create a user kuan with password 123
 
 5. run db.sql(located in my project folder) to build table
 
