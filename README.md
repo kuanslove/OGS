@@ -18,4 +18,4 @@ npm install pg
 
 
 Kuan
-kxing@srspharmacy.com
+kuanslove@gmail.com

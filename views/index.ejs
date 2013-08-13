@@ -3,16 +3,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title>untitled</title>
+	<title>Welcome to Online Grocery Store.</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/scripts/guiders.js"></script>
+    <link rel="stylesheet" href="/stylesheets/guiders.css" type="text/css" />
 	<style>
 		body {
 			margin:0px;
 			padding:0px;
 			background-color:steelblue;
-			background:url("images/cloud.jpg");
+			background:url("/images/cloud.jpg");
 		}
 
 
@@ -205,6 +207,7 @@
 			position:relative;
 			left:5px;
 			top:5px;
+            cursor: pointer;
 		}
 		#product_info {
 			position:absolute;
@@ -299,7 +302,23 @@
 </head>
 
 <body>
-	
+<!--
+	<button id="c_open">open or now</button>
+    <script>
+        jQuery(function($){
+            
+            
+
+            $('#c_open').click(function () {
+                console.profile(); 
+                console.profileEnd(); 
+                if(console.clear) { console.clear() };
+                return console.profiles.length > 0;
+            });
+            
+        });
+-->
+    </script>
 	<div id="header">
 		<div id="login_area">
 			<table>
@@ -361,7 +380,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		<div id="preview_frame">
 			<input type="file" id="img_file" style="display:none;" />
 			<canvas id="preview" width=100 height=100></canvas>
-			<br><br>Upload Product Logo.
+			<br><br>Click above to upload picture.
 		</div>
 		<div id="product_info">
 			<table>
@@ -417,13 +436,123 @@ If no keywrd specified, list all products in that category.">Search Item</button
 		</table>
 		<div id="switch_admin"><br><br><br><br><br><br><br><br>►</div>
 	</div>
-	
-	<script>
-		
 
+	<script>
+        // these guiders are welcome screen wizard.
+        var admin_email="kxing@srspharmacy.com";
+
+
+        // this is the first welcome screen
+		guiders.createGuider({
+		  buttons: [{name: "No, thanks.", onclick: guiders.hideAll},
+					{name:"Yes, show me around.", onclick: guiders.next}
+		  ],
+		  description: "This is a super simple online store, "+
+          "here you will be able to upload you stuff info, do a sale as in your garage."+
+          "<br><hr> If you need a user account, please contact "+
+          "<a href='mailto:kxing@srspharmacy.com' "+
+          "title='please email "+admin_email+" to get user account.'>"+
+          "WEB-ADMIN</a> to get it. Let's go to introduction!",
+		  id: "welcome",
+		  next: "login_intro",
+		  overlay: true,
+		  title: "Welcome to Online Grocery Store!"
+		}).show();
 		
+        // this is login area intro.
+		guiders.createGuider({
+		  attachTo: "#login_area table",
+		  buttons: [{name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "Input the user email and password here. If you do not have one,"+
+          "please contact <a href='mailto:kxing@srspharmacy.com' "+
+          "title='please email "+admin_email+" to get user account.'>"+
+          "WEB-ADMIN</a> to get one.",
+		  id: "login_intro",
+          next: "search_area_intro",
+		  position: 7,
+		  title: "You can LOG IN to upload your stuff info.",
+		  width: 300
+		});
+
+        // this is header search area intro.
+		guiders.createGuider({
+		  attachTo: "#search_area #search",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "You can search stuff by clicking Search Item button."+
+          "If no keyword specified in the search box, it will list all stuffs in the "+
+          "category shown in category box(you can change to another category, of course.), "+
+          "otherwise, it will list stuff with description or name matched.",
+		  id: "search_area_intro",
+          next: "upload_area_intro",
+		  position: 5,
+		  title: "You can SEARCH stuffs by keyword or just browse the whole category.",
+		  width: 500
+		});
+		
+        // this is stuff upload area intro.
+		guiders.createGuider({
+		  attachTo: "#edit_tab #switch",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "In this area, you can upload your stuff info, like pictures,"+
+          "product sales parameters. Click ◄ to get it out. <b>DO NOT</b> forget to log in! <hr>"+
+          "<b><span style='color:red;'>If this wizard bubble blocks you sight</span></b>"+
+          ", just drag and move it somewhere else.",
+		  id: "upload_area_intro",
+          next: "personal_area_intro",
+		  position: 9,
+		  title: "You can UPLOAD stuffs info here.",
+		  width: 300
+		});
+        
+        // this is personal stuff area intro.
+		guiders.createGuider({
+		  attachTo: "#switch_admin",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "In this area, you can get your stuff list, "+
+          "and set your new password. Click ► to get it out. <b>DO NOT</b> forget to log in!<hr>"+
+          "<b><span style='color:red;'>If this wizard bubble blocks you sight</span></b>"+
+          ", just drag and move it somewhere else.",
+		  id: "personal_area_intro",
+          next: "finish",
+		  position: 3,
+		  title: "You can GET and SET your personal info here.",
+		  width: 300
+		});    
+        
+        // this is personal stuff area intro.
+		guiders.createGuider({
+		  buttons: [{name: "Show again.", onclick: guiders.next},
+                    {name: "Ok, I am READY.", onclick: guiders.hideAll},
+          ],
+		  description: "If there is still anything you got question, please email "+
+                    "<a href='mailto:kxing@srspharmacy.com' "+
+          "title='please email "+admin_email+".'>"+
+          "WEB-ADMIN.</a>",
+		  id: "finish",
+          next:"login_intro",
+		  title: "Are you READY?",
+          overlay: true,
+		  width: 300
+		});    
+        
+        
+
 		jQuery(function($){
-			
+            // make the tip bubble movable
+			$(".guider").draggable();
+            
+            
 			//global variable for sync ajax request
 			var cur_category_list={};
 			var cur_product_info={};
@@ -587,6 +716,7 @@ function clone(a) {
 				$('.category').html(category_list);
 				$('.category').attr('selected_id',data[0].id);
 			};
+
 
 
 function render_item(params){
@@ -887,7 +1017,8 @@ function render_my_item(params){
 				build_my_page_list(cur_my_product_info.total_num);
 			};
 			
-			
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function init_category_product(){
@@ -980,6 +1111,7 @@ function bld_my_qstr(){
 			};
 			init_load();
 
+
 		function block_right_click(t_f){
 			if(t_f){
 				if (document.addEventListener) {
@@ -995,9 +1127,19 @@ function bld_my_qstr(){
 				}
 			}
 		};
-			
+        
+        function block_combine_key(t_f){
+            $(document).keydown(function(e) {     
+                if( e.ctrlKey && (e.keyCode == 16) )
+                        alert("WELCOME TO ONLINE GROCERY STORE.");
+                if( e.shiftKey && (e.keyCode == 17) )
+                        alert("WELCOME TO ONLINE GROCERY STORE.");
+            });
+        }
+        
+        
 			block_right_click(1);
-
+            block_combine_key(1);
 
 
 
@@ -1013,20 +1155,24 @@ function bld_my_qstr(){
 				};
 			// this function is for login button click
 			// it could be login or logout
-				function user_login(email, passwd, success_cb, error_cb){
+				function user_login(log_info, success_cb, error_cb){
 					$.ajax({
 						url:"/login/",
 						type:"POST",
 						datatype:'JSON',
 						data:{
-							'email':email,
-							'passwd':passwd
+							'email':log_info.email,
+							'passwd':log_info.passwd
 						},
 						success: success_cb,
 						error: error_cb||function(err){alert(err.responseText);}
 					});
 				};
-				user_login( $('#email').val().trim(), $('#passwd').val().trim(), suc_cb);
+				var log_info = {
+					email:$('#email').val().trim(),
+					passwd:$('#passwd').val().trim()
+				};
+				user_login(log_info, suc_cb);
 			});	
 
 			$('.category').change(function(){

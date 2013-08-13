@@ -3,16 +3,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title>untitled</title>
+	<title>Administration</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/scripts/guiders.js"></script>
+    <link rel="stylesheet" href="/stylesheets/guiders.css" type="text/css" />
 	<style>
 		body {
 			margin:0px;
 			padding:0px;
 			background-color:steelblue;
-			background:url("images/cloud.jpg");
+			background:url("/images/cloud.jpg");
 		}
 
 
@@ -186,6 +188,7 @@
 		}
 		button:hover {
 			background-color:rgba(220,220,220,0.6);
+			color:black;
 			font:normal normal normal 13px/normal Arial;
 		}
 		#preview_frame {
@@ -208,31 +211,35 @@
 		#product_info {
 			position:absolute;
 			top:9px;
-			left:229px;
+			left:29px;
 			width:370px;
+		}
+		#category_info {
+			position:absolute;
+			top:130px;
+			left:29px;
+			width:500px;
+			height:10px;
+			border-top:0px solid rgba(250,250,250,0.9);
+			
 		}
 		td {
 			border:0px solid gray;
 		}
 		#product_list_frame li {
 			color:rgba(100,100,100,1);
-			text-shadow:2px 0px rgba(250,250,250,1);
+			text-shadow:0px 0px rgba(250,250,250,1);
 			border-bottom:2px solid rgba(230,230,230,0.8);
 			padding-top:15px; 
 			margin:0px;
-			height:120px;
-		}
-		#my_product_list_frame li {
-			color:rgba(100,100,100,1);
+			height:70px;
 			text-shadow:2px 0px rgba(250,250,250,1);
-			border-bottom:2px solid rgba(230,230,230,0.8);
-			padding-top:15px; 
-			margin:0px;
-			height:120px;
+			font:normal normal normal 15px/normal Arial;
 		}
+
 		#product_list_frame .product_item {
 			position:relative;
-			left:50px;
+			left:10px;
 			width:850px;
 			height:160px; 
 		}
@@ -241,11 +248,7 @@
 			width:110px; 
 			height:110px;
 		}
-		#my_product_list_frame .p_logo {
-			border:1px solid gray;
-			width:110px; 
-			height:110px;
-		}
+
 		#product_list_frame .product_item .p_table {
 			position:absolute;
 			top:0px;
@@ -257,17 +260,23 @@
 			text-shadow:2px 0px rgba(250,250,250,1);
 			font:normal normal normal 13px/normal Arial;
 		}
-		.product_item .edit_product {
+		#category_info table tr td {
+			color:rgba(100,100,100,1);
+			text-shadow:2px 0px rgba(250,250,250,1);
+			font:normal normal normal 13px/normal Arial;
+		}
+		.product_item .edit_product, .product_item .edit_category{
 			position: absolute;
 			width:80px;
-			height:100px;
+			height:60px;
 			left:770px;
 			top:0px;
 			color:gray;
 			background-color:rgba(10,220,10,0.3);
 		}
-		.product_item .edit_product:hover {
+		.product_item .edit_product:hover ,  .product_item .edit_category:hover{
 			background-color:rgba(10,220,10,0.6);
+			color:black;
 		}
 		.product_item .del_product {
 			position: absolute;
@@ -286,12 +295,6 @@
 		a:hover {text-decoration:underline;}
 		a:active {text-decoration:none;}
 		
-		#admin_tab td {
-			border:0px solid pink;
-			color:rgba(100,100,100,1);
-			text-shadow:2px 0px rgba(250,250,250,1);
-			font:normal normal normal 13px/normal Arial;
-		}
 	</style>
 </head>
 
@@ -317,9 +320,9 @@
 			</button>
 		</div>
 		<div id="search_area">
-			<select id="category1" selected_id=0 class="category" title="Search in">
-				<option category_id=0>revise category</option>
+			<select id="category1" selected_id=1 class="category" title="Search in">
 				<option category_id=1>revise user</option>
+				<option category_id=0>revise category</option>	
 			</select>
 			<input type="text" style="width:200px;" id="keywd" title="Search for">
 			<button id="search" title="Search for specific item.">Search Item</button>
@@ -328,7 +331,7 @@
 	
 	<div id="content">
 		<ul id="product_list_frame" style="position:absolute; width:90%;height:600px;top:70px; 
-		left:40px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto; ">
+		left:60px; list-style:none; padding:0px;margin:0px;margin-bottom:80px; overflow-y:auto; ">	
 		</ul>
 		<table style="position:absolute; bottom:70px; width:100%;font:normal normal normal 13px/normal Arial;">
 			<tr >
@@ -357,45 +360,178 @@
 
 	<div id="edit_tab">
 		<div id="switch"><br><br><br><br>◄</div>
-		<div id="preview_frame">
-			<input type="file" id="img_file" style="display:none;" />
-			<canvas id="preview" width=100 height=100></canvas>
-			<br><br>Upload Product Logo.
-		</div>
+<!--
+		this is actually not product but user, I just use same name
+-->
 		<div id="product_info">
+			<div style="width:900px;background:rgba(221,221,221,0.6); border:0px solid purple;">
+				<table style="width:900px; height:60px; border-bottom: 0px solid white;">
+					<tr>
+						<td style="width:100px;">user name:</td>
+						<td style="width:200px;">
+							<input type="text" value="" title="USER NAME" id="reg_name" 
+							style="margin-top:0px; margin-bottom:0px;">
+						</td>
+						<td style="width:100px;">admin status</td>
+						<td>
+							<select id="reg_admn" class="admn" active=0 style="width:80px;border:0px solid gray;
+							color:white;background:rgba(200,0,0,0.6);">
+								<option active=0 style="color:white;background:rgba(200,0,0,0.6);">
+								disabled</option>
+								<option active=1 style="color:white;background:rgba(0,200,0,0.6);">
+								enabled</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td style="width:80px;">user email:</td>
+						<td style="width:200px;">
+							<input type="text" value="" title="USER EMAIL" id="reg_email" 
+							style="margin-top:0px; margin-bottom:0px;">
+						</td>
+						<td>active status</td>
+						<td>
+							<select id="reg_n_a" class="n_a" active=1 style="width:80px;border:0px solid gray;
+							color:white;background:rgba(0,200,0,0.6);">
+								<option active=1 style="color:white;background:rgba(0,200,0,0.6);">
+								enabled</option>
+								<option active=0 style="color:white;background:rgba(200,0,0,0.6);">
+								disabled</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<button id="add_user" style="width:100px;">Add User</button>
+		</div>
+		<div id="category_info">
 			<table>
 				<tr>
-					<td>name</td><td><input type="text" id="product_name" maxlength="50"></td>
-				</tr>
-				<tr>
-					<td>category</td><td><select id="product_category" class="category"></select></td>
-				</tr>
-				<tr>
-					<td>price</td><td><input type="text" id="product_price" maxlength="8"></td>
-				</tr>
-				<tr>
-					<td>amount</td><td><input type="text" id="product_amnt" maxlength="6"></td>
-				</tr>
-				<tr>
-					<td>description</td>
-					<td><textarea id="product_desc" rows=3 maxlength="200" 
-					style="width:160px; height:60px; resize:none;"></textarea></td>
+					<td style="width:100px;">category name:</td>
+					<td>
+						<input type="text" value="" title="CATEGORY NAME" id="reg_cat_name" 
+							style="margin-top:0px; margin-bottom:0px;">
+					</td>
 				</tr>
 			</table>
+			<button id="add_category" style="width:100px;">Add Category</button>
 		</div>
-		<button id="add_new" style="position: absolute; width:50px;
-		 height:65px; left:510px; top:120px;">Add Item
-		 </button>
 	</div>
 	<script>
-		
+        // these guiders are welcome screen wizard.
+        var admin_email="kxing@srspharmacy.com";
+
+
+        // this is the first welcome screen
+		guiders.createGuider({
+		  buttons: [{name: "No, thanks.", onclick: guiders.hideAll},
+					{name:"Yes, show me around.", onclick: guiders.next}
+		  ],
+		  description: "In this page, you can update category info and user info as an administrator.",
+		  id: "welcome",
+		  next: "login_intro",
+		  overlay: true,
+		  title: "Welcome to Administration Page!"
+		}).show();
+        
+        // this is login area intro.
+		guiders.createGuider({
+		  attachTo: "#login_area table",
+		  buttons: [{name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "Input your ADMIN email and password here. If you do not have one,"+
+          "please contact <a href='mailto:kxing@srspharmacy.com' "+
+          "title='please email "+admin_email+" to get user account.'>"+
+          "WEB-ADMIN</a> to get one.",
+		  id: "login_intro",
+          next: "task_area_intro",
+		  position: 7,
+		  title: "LOG IN as admin to manage info.",
+		  width: 400
+		});
+        
+        // this is header task area intro.
+		guiders.createGuider({
+		  attachTo: "#search_area #category1",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "You can choose one task: update category info or user info.",
+		  id: "task_area_intro",
+          next: "search_area_intro",
+		  position: 6,
+		  title: "You can which administration TASK to do.",
+		  width: 450
+		});
+        
+        
+        // this is header search area intro.
+		guiders.createGuider({
+		  attachTo: "#search_area #keywd",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "After you choose a task, you can input keyword to search "+
+          "specific info, or just click search to list all info for that task."+
+          "The keyword can match user name or user email or category name.",
+		  id: "search_area_intro",
+          next: "upload_area_intro",
+		  position: 6,
+		  title: "You can SEARCH info by keyword or just browse the whole list.",
+		  width: 400
+		});
+        
+        
+        // this is stuff upload area intro.
+		guiders.createGuider({
+		  attachTo: "#edit_tab #switch",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "In this area, you can add new category or new user, and set their attributions."+
+          "Click ◄ to get it out. <b>DO NOT</b> forget to log in! <hr>"+
+          "<b><span style='color:red;'>If this wizard bubble blocks you sight</span></b>"+
+          ", just drag and move it somewhere else.",
+		  id: "upload_area_intro",
+          next: "finish",
+		  position: 9,
+		  title: "You can ADD new category and user here.",
+		  width: 300
+		});
+
+
+        // this is personal stuff area intro.
+		guiders.createGuider({
+		  buttons: [{name: "Show again.", onclick: guiders.next},
+                    {name: "Ok, I am READY.", onclick: guiders.hideAll},
+          ],
+		  description: "If there is still anything you got question, please email "+
+                    "<a href='mailto:kxing@srspharmacy.com' "+
+          "title='please email "+admin_email+".'>"+
+          "WEB-ADMIN.</a>",
+		  id: "finish",
+          next:"login_intro",
+		  title: "Are you READY?",
+          overlay: true,
+		  width: 300
+		});   
+        
+        
+        
 
 		
 		jQuery(function($){
 			
+            // make the tip bubble movable
+			$(".guider").draggable();
+            
 			//global variable for sync ajax request
 			var cur_category_list={};
-			var cur_info={};
+			var cur_product_info={};
 			
 			// store current query for changing page.
 			var current_query="";
@@ -403,12 +539,6 @@
 
 			// cur_r is used for building product list params
 			var cur_r={};
-			// this is dedicated for my stuff tab
-			var cur_my_r={};
-			
-			var img_data='';
-			var cur_user_id=undefined;
-			var authenticated=false;
 			
 /////////////////////////////////////////////////////////////////////////////////////////
 			// most client side operation should involve this first. 
@@ -419,7 +549,7 @@
 			// this user has been authened. The return data will be automatically binded to first 
 			// param of callback function.
 				$.ajax({
-					url:"/auth/",
+					url:"/auth/admin/",
 					type:"POST",
 					datatype:'JSON',
 					success: suc_cb,
@@ -452,11 +582,56 @@
 				return (txt.trim().length==0);
 			}
 
+			function block_right_click(t_f){
+				if(t_f){
+					if (document.addEventListener) {
+						document.addEventListener('contextmenu', function(e) {
+							alert("WELCOME TO ONLINE GROCERY STORE.");
+							e.preventDefault();
+						}, false);
+					} else {
+						document.attachEvent('oncontextmenu', function() {
+							alert("WELCOME TO ONLINE GROCERY STORE.");
+							window.event.returnValue = false;
+						});
+					}
+				}
+			};
+			
+            function block_combine_key(t_f){
+                $(document).keydown(function(e) {     
+                    if( e.ctrlKey && (e.keyCode == 16) )
+                            alert("WELCOME TO ONLINE GROCERY STORE.");
+                    if( e.shiftKey && (e.keyCode == 17) )
+                            alert("WELCOME TO ONLINE GROCERY STORE.");
+                });
+            }
+            
+            
+block_right_click(1);
+block_combine_key(1);
+
+
 // Deep copy a JSON object
 function clone(a) {
    return JSON.parse(JSON.stringify(a));
 }
 
+// fill cur_r with current page params.
+function bld_qstr(){
+	cur_r={};
+	cur_r.task_id=$("#category1").attr("selected_id");
+	var keywd;
+	if($("#keywd").val().trim().length>0){
+		keywd = $("#keywd").val().trim().split(' ');
+		cur_r.keywd = keywd;
+	}
+	
+	cur_r.result_num = num_per_page;
+	cur_r.offst = 0;
+	//cur_r.offst = $('#page_num').attr('current_offst');
+	console.log(cur_r);
+};
 				
 			// One thing to remember, when you want to do a html mangling,
 			// you can use jQuery .text(), it can convert those.
@@ -503,35 +678,311 @@ function clone(a) {
 	//!!!!!!! THIS AJAX IS SYNC RATHER THAN ASYNC TO MAKE SURE WE GET THE CAT_INFO FIRST!!!!!!!!!//
 			function get_category(r, suc_cb, err_cb){
 				$.ajax({
-					url:"/s_category/",
+					url:"/s_category/admin/",
 					type:"POST",
 					datatype:'JSON',
+					data:r,
 					success: suc_cb,
 					error:err_cb||function(){alert('Failed to get category info.');},
 					async:false
 				});
 			};
-			
+
+function render_category_item(params){
+	var template = '\
+		<li>\
+		<div class="product_item" u_id='+params.id+'>\
+			<div style="width:900px;background:rgba(221,221,221,0.6); border:0px solid purple;">\
+				<table style="width:900px; height:60px;">\
+					<tr>\
+						<td style="width:120px;">category name:</td>\
+						<td>\
+						<input type="text" value='+params.name+' title="CATEGORY NAME" class="reg_cat_name"\
+						 style="margin-top:0px; margin-bottom:0px;">\
+						</td>\
+					</tr>\
+				</table>\
+			</div>\
+			<button class="edit_category">Update Category</button>\
+		</div>\
+		</li>\
+	';
+	return template;
+};
+	
 			function fill_category(data){
+				// return user list(data) looks like:
+				/*	{
+						total_num:r_num,
+						page_list:result.rows
+					}
+				*/
+				cur_product_info = clone(data);
+				var p_list_str="No user found.";
+				if(data.page_list.length>0) {
+					p_list_str='';
+					$.each(data.page_list, function(index, val){
+						p_list_str+=render_category_item(val);
+					});
+				}
+				$("#product_list_frame").html(p_list_str);
+
 				
+				// this is the product update button click event handler
+				$(".edit_category").click(function(){
+					
+					var updt_info = {
+						category_id:$(this).parent().attr('u_id'),
+						name:$(this).parent().find(".reg_cat_name").val().trim()
+					};
+					alert(updt_info);
+					function edit_category(updt_info){
+						// the updt_info looks like
+						// Right now, you can not change picture :(
+						/*
+								{
+									category_id
+									name
+								};
+						*/
+						$.ajax({
+							url:"/u_category/",
+							type:"POST",
+							data:updt_info,
+							datatype:"JSON",
+							success:function(data){
+								if(data.suc){
+									alert('User updated.');
+								}
+								else {
+									alert('You can not edit this category.');
+								}					
+							},
+							error:function(err){alert(err.responseText);}
+						});
+					};
+
+					// this just a wraper function 
+					function u_category(data){
+						if(data.authed){
+							edit_category(updt_info);
+						}
+						else {
+							alert("User not authenticated.");
+							not_authed();
+						}
+					};
+				if( isEmpty(updt_info.name)){
+					alert("Make sure you fill name.");
+				}
+				else {
+					auth_user(u_category);
+				}
+					
+				});
 			};
 						
-			function get_user(r, suc_cb){
+			function get_user(r, suc_cb, err_cb){
 				$.ajax({
-					url:"/s_user/",
+					url:"/s_user/admin/",
 					type:"POST",
 					datatype:'JSON',
+					data:r,
 					success: suc_cb,
-					error:err_cb||function(){alert('Failed to get user info.');},
+					error: err_cb||function(err){alert(err.responseText);},
 					async:false
 				});
 			};
-			
+
+function build_active(params){
+	if(params.n_a==true) {
+		return '\
+						<select class="n_a" active=0 style="width:80px;border:0px solid gray;\
+						color:white;background:rgba(200,0,0,0.6);">\
+							<option active=0 style="color:white;background:rgba(200,0,0,0.6);">\
+							disabled</option>\
+							<option active=1 style="color:white;background:rgba(0,200,0,0.6);">\
+							enabled</option>\
+						</select>\
+		';
+	}
+	else {
+		if(params.email!=$('#email').val()){
+			return '\
+							<select class="n_a" active=1 style="width:80px;border:0px solid gray;\
+							color:white;background:rgba(0,200,0,0.6);">\
+								<option active=1 style="color:white;background:rgba(0,200,0,0.6);">\
+								enabled</option>\
+								<option active=0 style="color:white;background:rgba(200,0,0,0.6);">\
+								disabled</option>\
+							</select>\
+			';				
+		}
+		else {
+			return '\
+				<select class="n_a" active=1 style="width:80px;border:0px solid gray;\
+				color:white;background:rgba(0,200,0,0.6);">\
+					<option active=1 style="color:white;background:rgba(0,200,0,0.6);">\
+					enabled</option>\
+				</select>\
+			';
+		}
+
+	}
+}
+
+function build_admin(params){
+	if(params.admn==false) {
+		return '\
+						<select class="admn" active=0 style="width:80px;border:0px solid gray;\
+						color:white;background:rgba(200,0,0,0.6);">\
+							<option active=0 style="color:white;background:rgba(200,0,0,0.6);">\
+							disabled</option>\
+							<option active=1 style="color:white;background:rgba(0,200,0,0.6);">\
+							enabled</option>\
+						</select>\
+		';
+	}
+	else {
+		if(params.email!=$('#email').val()){
+			return '\
+							<select class="admn" active=1 style="width:80px;border:0px solid gray;\
+							color:white;background:rgba(0,200,0,0.6);">\
+								<option active=1 style="color:white;background:rgba(0,200,0,0.6);">\
+								enabled</option>\
+								<option active=0 style="color:white;background:rgba(200,0,0,0.6);">\
+								disabled</option>\
+							</select>\
+			';				
+		}
+		else {
+			return '\
+				<select class="admn" active=1 style="width:80px;border:0px solid gray;\
+				color:white;background:rgba(0,200,0,0.6);">\
+					<option active=1 style="color:white;background:rgba(0,200,0,0.6);">\
+					enabled</option>\
+				</select>\
+			';
+		}
+
+	}
+}
+
+function render_user_item(params){
+	// the params looks like
+	/*
+						{
+							total_num:r_num,
+							page_list:result.rows
+						}
+	*/
+
+
+	
+	var template = '\
+		<li>\
+		<div class="product_item" u_id='+params.id+'>\
+			<div style="width:900px;background:rgba(221,221,221,0.6); border:0px solid purple;">\
+				<table style="width:900px; height:60px; border-bottom: 0px solid white;">\
+					<tr>\
+						<td style="width:80px;">user name:</td><td style="width:200px;">'+params.name+'</td>\
+						<td style="width:100px;">admin status</td>\
+						<td>'+build_admin(params)+'\
+						</td>\
+					</tr>\
+					<tr>\
+						<td style="width:80px;">user email:</td><td style="width:200px;">'+params.email+'</td>\
+						<td>active status</td>\
+						<td>'+build_active(params)+'\
+						</td>\
+					</tr>\
+				</table>\
+			</div>\
+			<button class="edit_product">Update User</button>\
+		</div>\
+		</li>\
+	';
+	return template;
+};
+		
 			function fill_user(data){
+				// return user list(data) looks like:
+				/*	{
+						total_num:r_num,
+						page_list:result.rows
+					}
+				*/
+				cur_product_info = clone(data);
+				var p_list_str="No user found.";
+				if(data.page_list.length>0) {
+					p_list_str='';
+					$.each(data.page_list, function(index, val){
+						p_list_str+=render_user_item(val);
+					});
+				}
+				$("#product_list_frame").html(p_list_str);
+				
+				$(".n_a,.admn").change(function(){
+					$(this).attr("active",$(this).find('option:selected').attr('active'));
+					if($(this).attr('active')==0){
+						$(this).css('background','rgba(200,0,0,0.6)');
+					}
+					else {
+						$(this).css('background','rgba(0,200,0,0.6)');
+					}
+				});
+				
+				// this is the product update button click event handler
+				$(".edit_product").click(function(){
+					
+					var updt_info = {
+						user_id:$(this).parent().attr('u_id'),
+						admn:$(this).parent().find(".admn").attr('active')==1?true:false,
+						n_a:$(this).parent().find(".n_a").attr('active')==1?false:true
+					};
+					
+					function edit_user(updt_info){
+						// the updt_info looks like
+						// Right now, you can not change picture :(
+						/*
+								{
+									admn:true,
+									n_a:false
+								};
+						*/
+						$.ajax({
+							url:"/u_user/",
+							type:"POST",
+							data:updt_info,
+							datatype:"JSON",
+							success:function(data){
+								if(data.suc){
+									alert('User updated.');
+								}
+								else {
+									alert('You can not edit this user.');
+								}					
+							},
+							error:function(err){alert(err.responseText);}
+						});
+					};
+
+					// this just a wraper function 
+					function u_product(data){
+						if(data.authed){
+							edit_user(updt_info);
+						}
+						else {
+							alert("User not authenticated.");
+							not_authed();
+						}
+					};
+					
+					auth_user(u_product);
+				});
 				
 			};
-			
-			
+		
 			// this part is for checking if a user logged in, and send back to client side
 			// to change client login area style(such as lock the login textbox and set logout button)
 			function set_user_login_info(){
@@ -539,7 +990,6 @@ function clone(a) {
 				// user logged-in info, if so, we need lock user login text box and show 
 				// logout button. 
 				function suc_cb(data){
-					//alert(data.message);
 					if(data.authed){
 						is_authed(data);
 					}
@@ -565,33 +1015,17 @@ function clone(a) {
 				$('#page_num').attr('current_offst',0);
 			};
 
-			function refresh_lst(){
-				get_info(cur_r, fill_info);
-				build_page_list(cur_info.total_num);
+			function refresh_lst(get_func, fill_func){
+				// In get_func, we just request some url with cur_r params,
+				// after the data return, we use it as input to fill_func
+				// in fill_func, we git that return data to cur_product_info
+				get_func(cur_r, fill_func);
+				build_page_list(cur_product_info.total_num);
 			};
 			
-			
+	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-// fill cur_r with current page params.
-function bld_qstr(){
-	cur_r={};
-	var category_id = $("#category1").attr("selected_id");
-	
-	cur_r.task_id = category_id;
-	
-	var keywd;
-	if($("#keywd").val().trim().length>0){
-		keywd = $("#keywd").val().trim().split(' ');
-		cur_r.keywd = keywd;
-	}
-	
-	cur_r.result_num = num_per_page;
-	cur_r.offst = 0;
-	//cur_r.offst = $('#page_num').attr('current_offst');
-	console.log(cur_r);
-};
 
 			function init_load(){
 			// this part is for adjusting the layout
@@ -625,8 +1059,6 @@ function bld_qstr(){
 				set_user_login_info();
 
 
-
-
 				//bld_qstr();
 				//refresh_lst();
 				// this is the end of init_load();	
@@ -647,7 +1079,7 @@ function bld_qstr(){
 			// it could be login or logout
 				function user_login(email, passwd, success_cb, error_cb){
 					$.ajax({
-						url:"/login/",
+						url:"/login/admin/",
 						type:"POST",
 						datatype:'JSON',
 						data:{
@@ -668,7 +1100,17 @@ function bld_qstr(){
 			$("#search").click(function(){
 				bld_qstr();
 				console.log("after build:",cur_r)
-				refresh_lst();
+				switch ( $("#category1").attr("selected_id") ) 
+				{
+					case '0': 
+						refresh_lst(get_category, fill_category);
+						break;
+					case '1':
+						refresh_lst(get_user, fill_user);
+						break;
+					default:
+						alert("System error.");
+				}
 			});
 		
 			$(window).resize(function(){
@@ -698,23 +1140,7 @@ function bld_qstr(){
 				
 				
 			});
-	
-			$('#add_new').click(function(){
-				// client provides product info( self-info, category_id), server uses 
-				// session user_id, use date() as date_reg, date_rev
-				
-				
-				//get image data and build the post form
-				var preview = document.getElementById('preview');
-				var img_data = preview.toDataURL();
-				var product_form = {
-					name:$("#product_name").val(),
-					category:$("#product_category").attr("selected_id"),
-					price:$("#product_price").val(),
-					amount:$("#product_amnt").val(),
-					description:$("#product_desc").val(),
-					img_data:img_data
-				};
+
 				
 				function blank_form(){
 					// After successful posting, we need to load a new empty form
@@ -724,52 +1150,23 @@ function bld_qstr(){
 					$("#product_desc").val("");
 				};
 				
-				function suc_cb(data){
-					if(data.authed){
-						$.ajax({
-							url:"/a_product/",
-							type:"POST",
-							data:{
-								product_info:product_form,
-							},
-							datatype:"JSON",
-							success:function(sts){
-								// if server updata this product info,
-								// it will return sts.cuc==true and allow 
-								// this page to update product list.
-								if(sts.suc){
-									alert("New product added");
-									// here should add update product list.
-									blank_form();
-								}
-								else {
-									alert("Please check login info.");
-								}
-							},
-							error:function(err){alert(err.responseText);}
-						});
-					}
-					else {
-						alert("User not authenticated.");
-						not_authed();
-					}
-				};
 				
-				var v = valid_form(product_form);
-				if(v.valid){
-					auth_user(suc_cb);
-					
-				}
-				else {
-					alert(v.tips);
-				}
-			});
-
 			$("#page_num").change(function(){
 				$(this).attr('current_offst',$(this).find("option:selected").attr("offst"));
 				cur_r.offst = $(this).attr('current_offst')*num_per_page;
 				console.log("after change page#:",cur_r);
-				get_product(cur_r, fill_product);
+				
+				switch ( cur_r.task_id ) 
+				{
+					case '0': 
+						get_category(cur_r, fill_category);
+						break;
+					case '1':
+						get_user(cur_r, fill_user);
+						break;
+					default:
+						alert("System error.");
+				}
 			});
 
 			$("#switch").click(function(){
@@ -781,9 +1178,121 @@ function bld_qstr(){
 					$("#switch").html("<br><br><br><br>►");
 				}
 				});
+
+			$(".n_a,.admn").change(function(){
+				$(this).attr("active",$(this).find('option:selected').attr('active'));
+				if($(this).attr('active')==0){
+					$(this).css('background','rgba(200,0,0,0.6)');
+				}
+				else {
+					$(this).css('background','rgba(0,200,0,0.6)');
+				}
+			});
 			
-// CURIOUS WHY THERE IS NO EVENT HANDLER FOR DELETE AND UPDATE?
-// I register DELETE and UPDATE button click event in fill_product() function
+			$("#add_user").click(function(){
+
+				var updt_info={
+					name:$("#reg_name").val().trim(),
+					email:$("#reg_email").val().trim(),
+					admn:$(this).parent().find(".admn").attr('active')==1?true:false,
+					n_a:$(this).parent().find(".n_a").attr('active')==1?false:true
+				};
+				
+				function add_user(updt_info){
+					// the updt_info looks like
+					// Right now, you can not change picture :(
+					/*
+							{
+								admn:true,
+								n_a:false
+							};
+					*/
+					$.ajax({
+						url:"/a_user/",
+						type:"POST",
+						data:updt_info,
+						datatype:"JSON",
+						success:function(data){
+							if(data.suc){
+								alert('User added.');
+								$("#reg_name").val("");
+								$("#reg_email").val("");
+							}
+							else {
+								alert('You can not add user.');
+							}					
+						},
+						error:function(err){alert(err.responseText);}
+					});
+				};
+			
+				function a_user(data){
+					if(data.authed) {
+						add_user(updt_info);
+					}
+					else {
+						alert("User not authenticated.");
+						not_authed();
+					}
+				};
+							
+				if( isEmpty(updt_info.name) || isEmpty(updt_info.email)){
+					alert("Make sure you fill name and email.");
+				}
+				else {
+					auth_user(a_user);
+				}
+				
+			});
+
+
+			$("#add_category").click(function(){
+
+				var updt_info={
+					name:$("#reg_cat_name").val().trim()
+				};
+				
+				function add_category(updt_info){
+					$.ajax({
+						url:"/a_category/",
+						type:"POST",
+						data:updt_info,
+						datatype:"JSON",
+						success:function(data){
+							if(data.suc){
+								alert('Category added.');
+							}
+							else {
+								alert('You can not add this category.');
+							}					
+						},
+						error:function(err){alert(err.responseText);}
+					});
+				};
+
+				// this just a wraper function 
+				function a_category(data){
+					if(data.authed){
+						add_category(updt_info);
+					}
+					else {
+						alert("User not authenticated.");
+						not_authed();
+					}
+				};
+				
+				if( isEmpty(updt_info.name)){
+					alert("Make sure you fill name.");
+				}
+				else {
+					auth_user(a_category);
+				}
+			});
+
+
+
+
+// I register UPDATE button click event in fill_product() function
 // because we need to register this call back to newly generated elements, otherwise
 // they will never work.
 
