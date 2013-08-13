@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-	<title>untitled</title>
+	<title>Welcome to Online Grocery Store.</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
@@ -302,7 +302,23 @@
 </head>
 
 <body>
-	
+<!--
+	<button id="c_open">open or now</button>
+    <script>
+        jQuery(function($){
+            
+            
+
+            $('#c_open').click(function () {
+                console.profile(); 
+                console.profileEnd(); 
+                if(console.clear) { console.clear() };
+                return console.profiles.length > 0;
+            });
+            
+        });
+-->
+    </script>
 	<div id="header">
 		<div id="login_area">
 			<table>
@@ -425,6 +441,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
         // these guiders are welcome screen wizard.
         var admin_email="kxing@srspharmacy.com";
 
+
         // this is the first welcome screen
 		guiders.createGuider({
 		  buttons: [{name: "No, thanks.", onclick: guiders.hideAll},
@@ -454,7 +471,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
           "WEB-ADMIN</a> to get one.",
 		  id: "login_intro",
           next: "search_area_intro",
-		  position: 2,
+		  position: 7,
 		  title: "You can LOG IN to upload your stuff info.",
 		  width: 300
 		});
@@ -467,7 +484,7 @@ If no keywrd specified, list all products in that category.">Search Item</button
                     {name: "Ok, next", onclick: guiders.next},
           ],
 		  description: "You can search stuff by clicking Search Item button."+
-          "If no keyword in the search box, then it will list all stuffs in the "+
+          "If no keyword specified in the search box, it will list all stuffs in the "+
           "category shown in category box(you can change to another category, of course.), "+
           "otherwise, it will list stuff with description or name matched.",
 		  id: "search_area_intro",

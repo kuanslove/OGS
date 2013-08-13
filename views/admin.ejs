@@ -7,6 +7,8 @@
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/scripts/guiders.js"></script>
+    <link rel="stylesheet" href="/stylesheets/guiders.css" type="text/css" />
 	<style>
 		body {
 			margin:0px;
@@ -416,11 +418,117 @@
 		</div>
 	</div>
 	<script>
-		
+        // these guiders are welcome screen wizard.
+        var admin_email="kxing@srspharmacy.com";
+
+
+        // this is the first welcome screen
+		guiders.createGuider({
+		  buttons: [{name: "No, thanks.", onclick: guiders.hideAll},
+					{name:"Yes, show me around.", onclick: guiders.next}
+		  ],
+		  description: "In this page, you can update category info and user info as an administrator.",
+		  id: "welcome",
+		  next: "login_intro",
+		  overlay: true,
+		  title: "Welcome to Administration Page!"
+		}).show();
+        
+        // this is login area intro.
+		guiders.createGuider({
+		  attachTo: "#login_area table",
+		  buttons: [{name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "Input your ADMIN email and password here. If you do not have one,"+
+          "please contact <a href='mailto:kxing@srspharmacy.com' "+
+          "title='please email "+admin_email+" to get user account.'>"+
+          "WEB-ADMIN</a> to get one.",
+		  id: "login_intro",
+          next: "task_area_intro",
+		  position: 7,
+		  title: "LOG IN as admin to manage info.",
+		  width: 400
+		});
+        
+        // this is header task area intro.
+		guiders.createGuider({
+		  attachTo: "#search_area #category1",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "You can choose one task: update category info or user info.",
+		  id: "task_area_intro",
+          next: "search_area_intro",
+		  position: 6,
+		  title: "You can which administration TASK to do.",
+		  width: 450
+		});
+        
+        
+        // this is header search area intro.
+		guiders.createGuider({
+		  attachTo: "#search_area #keywd",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "After you choose a task, you can input keyword to search "+
+          "specific info, or just click search to list all info for that task."+
+          "The keyword can match user name or user email or category name.",
+		  id: "search_area_intro",
+          next: "upload_area_intro",
+		  position: 6,
+		  title: "You can SEARCH info by keyword or just browse the whole list.",
+		  width: 400
+		});
+        
+        
+        // this is stuff upload area intro.
+		guiders.createGuider({
+		  attachTo: "#edit_tab #switch",
+		  buttons: [{name: "Back"},
+                    {name: "Go away", onclick: guiders.hideAll},
+                    {name: "Ok, next", onclick: guiders.next},
+          ],
+		  description: "In this area, you can add new category or new user, and set their attributions."+
+          "Click ◄ to get it out. <b>DO NOT</b> forget to log in! <hr>"+
+          "<b><span style='color:red;'>If this wizard bubble blocks you sight</span></b>"+
+          ", just drag and move it somewhere else.",
+		  id: "upload_area_intro",
+          next: "finish",
+		  position: 9,
+		  title: "You can ADD new category and user here.",
+		  width: 300
+		});
+
+
+        // this is personal stuff area intro.
+		guiders.createGuider({
+		  buttons: [{name: "Show again.", onclick: guiders.next},
+                    {name: "Ok, I am READY.", onclick: guiders.hideAll},
+          ],
+		  description: "If there is still anything you got question, please email "+
+                    "<a href='mailto:kxing@srspharmacy.com' "+
+          "title='please email "+admin_email+".'>"+
+          "WEB-ADMIN.</a>",
+		  id: "finish",
+          next:"login_intro",
+		  title: "Are you READY?",
+          overlay: true,
+		  width: 300
+		});   
+        
+        
+        
 
 		
 		jQuery(function($){
 			
+            // make the tip bubble movable
+			$(".guider").draggable();
+            
 			//global variable for sync ajax request
 			var cur_category_list={};
 			var cur_product_info={};
@@ -490,6 +598,19 @@
 				}
 			};
 			
+            function block_combine_key(t_f){
+                $(document).keydown(function(e) {     
+                    if( e.ctrlKey && (e.keyCode == 16) )
+                            alert("WELCOME TO ONLINE GROCERY STORE.");
+                    if( e.shiftKey && (e.keyCode == 17) )
+                            alert("WELCOME TO ONLINE GROCERY STORE.");
+                });
+            }
+            
+            
+block_right_click(1);
+block_combine_key(1);
+
 
 // Deep copy a JSON object
 function clone(a) {
@@ -937,8 +1058,6 @@ function render_user_item(params){
 				//get_category(fill_category);	
 				set_user_login_info();
 
-
-block_right_click(1);
 
 				//bld_qstr();
 				//refresh_lst();
