@@ -8,6 +8,9 @@ Official Version of Online Grocery Store
 It can provide user general function like upload stuff info for sale
 and Admin function like user stuff category management.
 
+The tech stack involves:
+HTML5, CSS3, jQuery, Node.js, PostgreSQL, HTTPS, Linux, AJAX
+
 I did not install all library in this folder, so when you clone this,
 make sure add environment variable the node bin folder, and in this ogs folder, use:
 
