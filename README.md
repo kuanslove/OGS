@@ -23,3 +23,8 @@ BTW, do not forget to install postgres 9.X, the Postgres 8.X has some problem wi
 
 Kuan
 kuanslove@gmail.com
+
+![Alt text](/preview/Screenshot%20from%202013-08-15%2015:46:29.png?raw=true "Optional Title")
+![Alt text](/preview/Screenshot%20from%202013-07-29%2002:15:51.png?raw=true "Optional Title")
+![Alt text](/preview/Screenshot%20from%202013-08-15%2015:46:59.png?raw=true "Optional Title")
+
